@@ -1,0 +1,13 @@
+{
+  "name": "scribe-timecards",
+  "private": true,
+  "packageManager": "pnpm@9.1.0",
+  "scripts": {
+    "dev": "concurrently -n server,client -c green,cyan \"pnpm --filter @scribe-timecards/server dev\" \"pnpm --filter @scribe-timecards/client dev\"",
+    "build": "pnpm --filter @scribe-timecards/server build && pnpm --filter @scribe-timecards/client build",
+    "type-check": "pnpm -r type-check"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  }
+}
