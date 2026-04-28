@@ -4,8 +4,16 @@ Monorepo for the Scribe Timecards app — React frontend, Node/Express backend, 
 
 ## Prerequisites
 
-- **Node.js 18+**
-- **Corepack** (ships with Node 18 — no separate install needed)
+- **Node.js 22+** (LTS — [download](https://nodejs.org))
+- **Corepack** (ships with Node 22 — no separate install needed)
+
+If you use a Node version manager, the repo includes an [`.nvmrc`](.nvmrc) so you can switch automatically:
+
+```bash
+# nvm
+nvm install   # installs Node 22 if not already present
+nvm use       # switches to the version in .nvmrc
+```
 
 ## Getting started
 

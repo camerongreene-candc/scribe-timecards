@@ -7,6 +7,10 @@
     "build": "pnpm --filter @scribe-timecards/server build && pnpm --filter @scribe-timecards/client build",
     "type-check": "pnpm -r type-check"
   },
+  "engines": {
+    "node": ">=22",
+    "pnpm": ">=9"
+  },
   "devDependencies": {
     "concurrently": "^8.2.0"
   }
