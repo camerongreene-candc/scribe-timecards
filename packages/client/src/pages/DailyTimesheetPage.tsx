@@ -16,7 +16,7 @@ import {
   AutocompleteInput,
 } from '@castandcrew/platform-ui';
 import type { ColumnDef } from '@tanstack/react-table';
-import type { ExtractedTimecardData } from '@scribe-timecards/shared';
+import type { ProcessResponse } from '@scribe-timecards/shared';
 import { ExtractModal } from '../components/extract-modal/ExtractModal';
 import styles from './DailyTimesheetPage.module.css';
 
@@ -30,12 +30,12 @@ interface EmployeeRow {
   union: string;
   dayType: string;
   workZone: string;
-  callTime: string;
-  meal1Out: string;
-  meal1In: string;
-  lastManIn: string;
-  wrap: string;
-  dailyAllow: string;
+  callTime: number | null;
+  meal1Out: number | null;
+  meal1In: number | null;
+  lastManIn: number | null;
+  wrap: number | null;
+  dailyAllow: number | null;
   country: string;
 }
 
@@ -50,12 +50,12 @@ const SAMPLE_ROWS: EmployeeRow[] = [
     union: 'IATSE 729 - PAI...',
     dayType: '',
     workZone: '',
-    callTime: '',
-    meal1Out: '',
-    meal1In: '',
-    lastManIn: '',
-    wrap: '',
-    dailyAllow: '',
+    callTime: null,
+    meal1Out: null,
+    meal1In: null,
+    lastManIn: null,
+    wrap: null,
+    dailyAllow: null,
     country: 'United States',
   },
   {
@@ -66,12 +66,12 @@ const SAMPLE_ROWS: EmployeeRow[] = [
     union: 'IATSE 800 - AR...',
     dayType: '',
     workZone: '',
-    callTime: '',
-    meal1Out: '',
-    meal1In: '',
-    lastManIn: '',
-    wrap: '',
-    dailyAllow: '',
+    callTime: null,
+    meal1Out: null,
+    meal1In: null,
+    lastManIn: null,
+    wrap: null,
+    dailyAllow: null,
     country: 'United States',
   },
   {
@@ -82,12 +82,12 @@ const SAMPLE_ROWS: EmployeeRow[] = [
     union: 'IATSE 839 - SC...',
     dayType: '',
     workZone: '',
-    callTime: '',
-    meal1Out: '',
-    meal1In: '',
-    lastManIn: '',
-    wrap: '',
-    dailyAllow: '',
+    callTime: null,
+    meal1Out: null,
+    meal1In: null,
+    lastManIn: null,
+    wrap: null,
+    dailyAllow: null,
     country: 'United States',
   },
   {
@@ -98,12 +98,12 @@ const SAMPLE_ROWS: EmployeeRow[] = [
     union: 'NON-UNION',
     dayType: '',
     workZone: '',
-    callTime: '',
-    meal1Out: '',
-    meal1In: '',
-    lastManIn: '',
-    wrap: '',
-    dailyAllow: '',
+    callTime: null,
+    meal1Out: null,
+    meal1In: null,
+    lastManIn: null,
+    wrap: null,
+    dailyAllow: null,
     country: 'United States',
   },
   {
@@ -114,12 +114,12 @@ const SAMPLE_ROWS: EmployeeRow[] = [
     union: 'NON-UNION',
     dayType: '',
     workZone: '',
-    callTime: '',
-    meal1Out: '',
-    meal1In: '',
-    lastManIn: '',
-    wrap: '',
-    dailyAllow: '',
+    callTime: null,
+    meal1Out: null,
+    meal1In: null,
+    lastManIn: null,
+    wrap: null,
+    dailyAllow: null,
     country: 'United States',
   },
   {
@@ -130,12 +130,12 @@ const SAMPLE_ROWS: EmployeeRow[] = [
     union: 'NON-UNION',
     dayType: '',
     workZone: '',
-    callTime: '',
-    meal1Out: '',
-    meal1In: '',
-    lastManIn: '',
-    wrap: '',
-    dailyAllow: '',
+    callTime: null,
+    meal1Out: null,
+    meal1In: null,
+    lastManIn: null,
+    wrap: null,
+    dailyAllow: null,
     country: 'United States',
   },
   {
@@ -146,12 +146,12 @@ const SAMPLE_ROWS: EmployeeRow[] = [
     union: 'NON-UNION',
     dayType: '',
     workZone: '',
-    callTime: '',
-    meal1Out: '',
-    meal1In: '',
-    lastManIn: '',
-    wrap: '',
-    dailyAllow: '',
+    callTime: null,
+    meal1Out: null,
+    meal1In: null,
+    lastManIn: null,
+    wrap: null,
+    dailyAllow: null,
     country: 'United States',
   },
   {
@@ -162,12 +162,12 @@ const SAMPLE_ROWS: EmployeeRow[] = [
     union: 'NON-UNION',
     dayType: '',
     workZone: '',
-    callTime: '',
-    meal1Out: '',
-    meal1In: '',
-    lastManIn: '',
-    wrap: '',
-    dailyAllow: '',
+    callTime: null,
+    meal1Out: null,
+    meal1In: null,
+    lastManIn: null,
+    wrap: null,
+    dailyAllow: null,
     country: 'United States',
   },
   {
@@ -178,12 +178,12 @@ const SAMPLE_ROWS: EmployeeRow[] = [
     union: 'NON-UNION',
     dayType: '',
     workZone: '',
-    callTime: '',
-    meal1Out: '',
-    meal1In: '',
-    lastManIn: '',
-    wrap: '',
-    dailyAllow: '',
+    callTime: null,
+    meal1Out: null,
+    meal1In: null,
+    lastManIn: null,
+    wrap: null,
+    dailyAllow: null,
     country: 'United States',
   },
   {
@@ -194,12 +194,12 @@ const SAMPLE_ROWS: EmployeeRow[] = [
     union: 'IATSE 729 - PAI...',
     dayType: '',
     workZone: '',
-    callTime: '',
-    meal1Out: '',
-    meal1In: '',
-    lastManIn: '',
-    wrap: '',
-    dailyAllow: '',
+    callTime: null,
+    meal1Out: null,
+    meal1In: null,
+    lastManIn: null,
+    wrap: null,
+    dailyAllow: null,
     country: 'United States',
   },
   {
@@ -210,12 +210,12 @@ const SAMPLE_ROWS: EmployeeRow[] = [
     union: 'IATSE 839 - SC...',
     dayType: '',
     workZone: '',
-    callTime: '',
-    meal1Out: '',
-    meal1In: '',
-    lastManIn: '',
-    wrap: '',
-    dailyAllow: '',
+    callTime: null,
+    meal1Out: null,
+    meal1In: null,
+    lastManIn: null,
+    wrap: null,
+    dailyAllow: null,
     country: 'United States',
   },
   {
@@ -226,12 +226,12 @@ const SAMPLE_ROWS: EmployeeRow[] = [
     union: 'IATSE 839 - SC...',
     dayType: '',
     workZone: '',
-    callTime: '',
-    meal1Out: '',
-    meal1In: '',
-    lastManIn: '',
-    wrap: '',
-    dailyAllow: '',
+    callTime: null,
+    meal1Out: null,
+    meal1In: null,
+    lastManIn: null,
+    wrap: null,
+    dailyAllow: null,
     country: 'United States',
   },
   {
@@ -242,12 +242,12 @@ const SAMPLE_ROWS: EmployeeRow[] = [
     union: 'NON-UNION',
     dayType: '',
     workZone: '',
-    callTime: '',
-    meal1Out: '',
-    meal1In: '',
-    lastManIn: '',
-    wrap: '',
-    dailyAllow: '',
+    callTime: null,
+    meal1Out: null,
+    meal1In: null,
+    lastManIn: null,
+    wrap: null,
+    dailyAllow: null,
     country: 'United States',
   },
   {
@@ -258,12 +258,12 @@ const SAMPLE_ROWS: EmployeeRow[] = [
     union: 'NON-UNION',
     dayType: '',
     workZone: '',
-    callTime: '',
-    meal1Out: '',
-    meal1In: '',
-    lastManIn: '',
-    wrap: '',
-    dailyAllow: '',
+    callTime: null,
+    meal1Out: null,
+    meal1In: null,
+    lastManIn: null,
+    wrap: null,
+    dailyAllow: null,
     country: 'United States',
   },
   {
@@ -274,12 +274,12 @@ const SAMPLE_ROWS: EmployeeRow[] = [
     union: 'NON-UNION',
     dayType: '',
     workZone: '',
-    callTime: '',
-    meal1Out: '',
-    meal1In: '',
-    lastManIn: '',
-    wrap: '',
-    dailyAllow: '',
+    callTime: null,
+    meal1Out: null,
+    meal1In: null,
+    lastManIn: null,
+    wrap: null,
+    dailyAllow: null,
     country: 'United States',
   },
 ];
@@ -290,19 +290,6 @@ const DAY_TYPE_OPTIONS = toOpts(['1 - WORK', '2 - HOLIDAY', '3 - TRAVEL', '4 - S
 const WORK_ZONE_OPTIONS = toOpts(['Studio', 'Location', 'Distant', 'Home']);
 const COUNTRY_OPTIONS   = toOpts(['United States', 'Canada']);
 
-const DAY_TYPE_LABEL: Record<string, string> = {
-  Worked: '1 - WORK',
-  Holiday: '2 - HOLIDAY',
-  Travel: '3 - TRAVEL',
-  Sick: '4 - SICK',
-  Vacation: '5 - VACATION',
-  Rest: '',
-};
-
-const COUNTRY_NAME: Record<string, string> = {
-  US: 'United States',
-  CA: 'Canada',
-};
 
 // ─── Column definitions ───────────────────────────────────────────────────────
 
@@ -367,7 +354,7 @@ const DTS_COLUMNS: ColumnDef<EmployeeRow, unknown>[] = [
     cell: ({ getValue }) => (
       <TextField
         aria-label='Call Time'
-        value={getValue() as string}
+        value={String(getValue() ?? '')}
         className={styles.dts_cellInput}
         isFullWidth
         size='sm'
@@ -437,7 +424,7 @@ const DTS_COLUMNS: ColumnDef<EmployeeRow, unknown>[] = [
     cell: ({ getValue }) => (
       <TextField
         aria-label='Daily Allow'
-        value={getValue() as string}
+        value={String(getValue() ?? '')}
         className={styles.dts_cellInput}
         size='sm'
       />
@@ -463,8 +450,8 @@ const DTS_COLUMNS: ColumnDef<EmployeeRow, unknown>[] = [
 export default function DailyTimesheetPage() {
   const [rows, setRows] = useState<EmployeeRow[]>(SAMPLE_ROWS);
 
-  function handleExtractComplete(ext: ExtractedTimecardData) {
-    const [firstName, lastName = ''] = ext.employee.fullName.split(' ').map((n: string) => n.toUpperCase());
+  function handleExtractComplete({ employeeName, day }: ProcessResponse) {
+    const [firstName, lastName = ''] = employeeName.split(' ').map((n) => n.toUpperCase());
     setRows((prev) =>
       prev.map((r) => {
         const storedLast = r.lastName.replace(/\.+$/, '');
@@ -472,12 +459,12 @@ export default function DailyTimesheetPage() {
         return matches
           ? {
               ...r,
-              dayType: DAY_TYPE_LABEL[ext.dayType] ?? '',
-              callTime: ext.callTime ?? '',
-              meal1Out: ext.meal1Out ?? '',
-              meal1In: ext.meal1In ?? '',
-              wrap: ext.wrapTime ?? '',
-              country: COUNTRY_NAME[ext.workZone.country] ?? ext.workZone.country,
+              dayType: day.dayType?.code ?? '',
+              callTime: day.callTime ?? null,
+              meal1Out: day.meal1Out ?? null,
+              meal1In: day.meal1In ?? null,
+              wrap: day.wrapTime ?? null,
+              country: day.workCountry?.name ?? r.country,
             }
           : r;
       })

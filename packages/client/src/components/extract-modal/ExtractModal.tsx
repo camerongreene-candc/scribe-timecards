@@ -6,14 +6,14 @@ import {
   ModalContent,
   ModalFooter,
 } from '@castandcrew/platform-ui';
-import type { ApiResponse, ExtractedTimecardData } from '@scribe-timecards/shared';
+import type { ApiResponse, ProcessResponse } from '@scribe-timecards/shared';
 import { UploadPromptStep } from './UploadPromptStep';
 import { ProcessingStep } from './ProcessingStep';
 
 type Step = 'upload' | 'processing';
 
 interface ExtractModalProps {
-  onComplete: (data: ExtractedTimecardData) => void;
+  onComplete: (data: ProcessResponse) => void;
 }
 
 export function ExtractModal({ onComplete }: ExtractModalProps) {
@@ -36,8 +36,8 @@ export function ExtractModal({ onComplete }: ExtractModalProps) {
       const body = new FormData();
       body.append('file', selectedFile);
       const res = await fetch('/api/process', { method: 'POST', body });
-      const json: ApiResponse<{ extracted: ExtractedTimecardData }> = await res.json();
-      onComplete(json.data.extracted);
+      const json: ApiResponse<ProcessResponse> = await res.json();
+      onComplete(json.data);
     } catch {
       setStep('upload');
     }

@@ -359,6 +359,8 @@ export const DTSDaySchema = z
 
 export type DTSDay = z.infer<typeof DTSDaySchema>
 
+export type ProcessResponse = { employeeName: string; day: Partial<DTSDay> }
+
 // ─── Transform: extracted day → DTS day ──────────────────────────────────────
 
 export const extractedToDTSDay = (
