@@ -16,7 +16,8 @@ import {
   AutocompleteInput,
 } from '@castandcrew/platform-ui';
 import type { ColumnDef } from '@tanstack/react-table';
-import type { ApiResponse, ExtractedTimecardData } from '@scribe-timecards/shared';
+import type { ExtractedTimecardData } from '@scribe-timecards/shared';
+import { ExtractModal } from '../components/extract-modal/ExtractModal';
 import styles from './DailyTimesheetPage.module.css';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -461,35 +462,26 @@ const DTS_COLUMNS: ColumnDef<EmployeeRow, unknown>[] = [
 
 export default function DailyTimesheetPage() {
   const [rows, setRows] = useState<EmployeeRow[]>(SAMPLE_ROWS);
-  const [extracting, setExtracting] = useState(false);
 
-  async function handleExtract() {
-    setExtracting(true);
-    try {
-      const res = await fetch('/api/process', { method: 'POST' });
-      const json: ApiResponse<{ extracted: ExtractedTimecardData }> = await res.json();
-      const ext = json.data.extracted;
-      const [firstName, lastName = ''] = ext.employee.fullName.split(' ').map((n) => n.toUpperCase());
-      setRows((prev) =>
-        prev.map((r) => {
-          const storedLast = r.lastName.replace(/\.+$/, '');
-          const matches = r.firstName === firstName && lastName.startsWith(storedLast);
-          return matches
-            ? {
-                ...r,
-                dayType: DAY_TYPE_LABEL[ext.dayType] ?? '',
-                callTime: ext.callTime ?? '',
-                meal1Out: ext.meal1Out ?? '',
-                meal1In: ext.meal1In ?? '',
-                wrap: ext.wrapTime ?? '',
-                country: COUNTRY_NAME[ext.workZone.country] ?? ext.workZone.country,
-              }
-            : r;
-        })
-      );
-    } finally {
-      setExtracting(false);
-    }
+  function handleExtractComplete(ext: ExtractedTimecardData) {
+    const [firstName, lastName = ''] = ext.employee.fullName.split(' ').map((n: string) => n.toUpperCase());
+    setRows((prev) =>
+      prev.map((r) => {
+        const storedLast = r.lastName.replace(/\.+$/, '');
+        const matches = r.firstName === firstName && lastName.startsWith(storedLast);
+        return matches
+          ? {
+              ...r,
+              dayType: DAY_TYPE_LABEL[ext.dayType] ?? '',
+              callTime: ext.callTime ?? '',
+              meal1Out: ext.meal1Out ?? '',
+              meal1In: ext.meal1In ?? '',
+              wrap: ext.wrapTime ?? '',
+              country: COUNTRY_NAME[ext.workZone.country] ?? ext.workZone.country,
+            }
+          : r;
+      })
+    );
   }
 
   return (
@@ -533,13 +525,7 @@ export default function DailyTimesheetPage() {
 
             {/* Additional Fields (column-visibility trigger) */}
             <div className={styles.dts_header__secondary}>
-              <Button // extracting button
-                buttonVariant='outlined'
-                isDisabled={extracting}
-                onPress={handleExtract}
-              >
-                {extracting ? 'Extracting…' : 'Extract from Report'}
-              </Button>
+              <ExtractModal onComplete={handleExtractComplete} />
               <Button buttonVariant='outlined'>Additional Fields</Button>
             </div>
           </div>

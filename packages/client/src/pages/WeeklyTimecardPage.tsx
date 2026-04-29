@@ -6,11 +6,10 @@
  * with minimal local UI state (drawer open/closed).
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   Button,
   Icon,
-  Badge,
   SquareIconToggleButton,
   GridTable,
   AutocompleteInput,
@@ -151,7 +150,7 @@ const HISTORY_ROWS = [
 const CALC_COL_IDS   = new Set(['hours']);
 const SELECT_COL_IDS = new Set(['workLoc', 'dayType', 'epi', 'loc']);
 
-const toOpts = (vals) => vals.map((v) => ({ id: v, label: v }));
+const toOpts = (vals: string[]) => vals.map((v) => ({ id: v, label: v }));
 const SELECT_OPTIONS = {
   workLoc: toOpts(['Studio', 'Location', 'Distant', 'Home']),
   dayType: toOpts(['1 - WORK', '2 - HOLIDAY', '3 - TRAVEL', '4 - SICK', '5 - VACATION']),
@@ -194,7 +193,7 @@ const MAIN_COLUMNS = [
         Edit Days / Times
       </Button>
     ),
-    cell: ({ row }) => {
+    cell: ({ row }: { row: any }) => {
       if (row.original._isMaster) return null;
       return (
         <div className={styles.wtc_dayCell}>
@@ -208,7 +207,7 @@ const MAIN_COLUMNS = [
     accessorKey: col.id,
     header: col.label,
     enableSorting: false,
-    cell: ({ row, getValue }) => {
+    cell: ({ row, getValue }: { row: any; getValue: () => unknown }) => {
       const value = getValue() ?? '';
       const isMaster = Boolean(row.original._isMaster);
 
@@ -219,7 +218,7 @@ const MAIN_COLUMNS = [
         return (
           <AutocompleteInput
             aria-label={col.label}
-            options={SELECT_OPTIONS[col.id]}
+            options={SELECT_OPTIONS[col.id as keyof typeof SELECT_OPTIONS]}
             defaultSelectedKey={String(value)}
             className={styles.wtc_cellSelect}
             popoverClassName={styles.wtc_cellSelectPopover}
@@ -261,7 +260,7 @@ const BREAKDOWN_COLS = [
     accessorKey: 'amount',
     header: 'Amount',
     enableSorting: false,
-    cell: ({ getValue }) => (
+    cell: ({ getValue }: { getValue: () => unknown }) => (
       <span className={styles['wtc_altTd--amount']}>
         {String(getValue() ?? '')}
       </span>
@@ -277,7 +276,7 @@ const HISTORY_COLS = [
 
 // ─── Sub-components ────────────────────────────────────────────────────────────
 
-function DrawerTimecardItem({ tc }) {
+function DrawerTimecardItem({ tc }: { tc: any }) {
   return (
     <div
       className={`${styles.wtc_drawer__item} ${tc.active ? styles['wtc_drawer__item--active'] : ''}`}
@@ -380,6 +379,7 @@ export default function WeeklyTimecardPage() {
                 iconName='arrow-down-to-line'
                 aria-label='Download report'
               />
+              {/* @ts-expect-error — 'people-arrows' exists in FA but is missing from platform-ui's IconName union */}
               <SquareIconToggleButton
                 iconName='people-arrows'
                 aria-label='Move timecards'
@@ -395,8 +395,7 @@ export default function WeeklyTimecardPage() {
           <div className={styles.wtc_drawer__search}>
             <Icon iconName='magnifying-glass' size='sm' />
             <TextField
-              placeholder='Search timecards…'
-              inputProps={{ 'aria-label': 'Search timecards' }}
+              inputProps={{ 'aria-label': 'Search timecards', placeholder: 'Search timecards…' }}
               className={styles.wtc_drawer__searchInput}
               size='sm'
             />
@@ -469,6 +468,7 @@ export default function WeeklyTimecardPage() {
               >
                 Revert
               </Button>
+              {/* @ts-expect-error — 'print' exists in FA but is missing from platform-ui's IconName union */}
               <SquareIconToggleButton iconName='print' aria-label='Print' />
             </div>
 
