@@ -1,7 +1,7 @@
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { ProductNavigation } from '@castandcrew/platform-ui';
-import DailyTimesheetPage from './pages/DailyTimesheetPage';
-import WeeklyTimecardPage from './pages/WeeklyTimecardPage';
+import DailyTimesheetPage from './pages/DailyTimesheets';
+import WeeklyTimecardPage from './pages/WeeklyTimecard';
 import TransferOrbDevPage from './pages/TransferOrbDevPage';
 import styles from './App.module.css';
 
@@ -18,12 +18,14 @@ export default function App() {
 
   return (
     <div className={styles.app_root}>
+      <header className={styles.app_header}>
       <ProductNavigation
         links={NAV_LINKS}
         selectedKey={selectedKey}
         onSelectionChange={(key) => navigate(`/${key}`)}
         hideHelpIcon
       />
+      </header>
       <main className={styles.app_main}>
         <Routes>
           <Route index element={<Navigate to="/daily-timesheets" replace />} />

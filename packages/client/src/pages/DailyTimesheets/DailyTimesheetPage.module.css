@@ -87,13 +87,29 @@
 
 .dts_header__secondary {
   margin-left: auto;
+  position: relative;
+}
+
+/* ── Additional Fields popover ───────────────────────────────────────────── */
+
+.dts_addFieldsBadge {
+  margin-left: var(--space-xs);
+}
+
+.dts_addFieldsSelect {
+  min-width: 180px;
+}
+
+.dts_addFieldsTrigger {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
 }
 
 /* ── Table wrapper ────────────────────────────────────────────────────────── */
 
 .dts_tableWrapper {
-  flex: 1;
-  overflow: hidden;
+  overflow-x: scroll;
   margin: var(--space-md);
   border-radius: var(--border-radius-md);
   border: 1px solid var(--color-border-primary);
@@ -273,6 +289,11 @@
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-primary);
+}
+
+:global([class*='_spotlight_MultiSelect_list']) {
+  max-height: 500px;
+  overflow-x: hidden;
 }
 
 .dts_filtersControls {

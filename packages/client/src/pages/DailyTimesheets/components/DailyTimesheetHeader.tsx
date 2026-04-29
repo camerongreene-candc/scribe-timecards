@@ -1,0 +1,45 @@
+import { Button, Icon, IconButton, TextField } from '@castandcrew/platform-ui';
+import AdditionalFieldsSelect from './AdditionalFieldsSelect';
+import styles from '../DailyTimesheetPage.module.css';
+
+interface DailyTimesheetHeaderProps {
+  extraCols: Set<string>;
+  onExtraColsChange: (cols: Set<string>) => void;
+}
+
+export default function DailyTimesheetHeader({ extraCols, onExtraColsChange }: DailyTimesheetHeaderProps) {
+  return (
+    <header className={styles.dts_header}>
+      <div className={styles.dts_header__row}>
+
+        <div className={styles.dts_header__dateSection}>
+          <span className={styles.dts_header__dateLabel}>Date:</span>
+          <div className={styles.dts_header__dateControls}>
+            <IconButton buttonVariant='ghost' iconName='chevron-left' aria-label='Previous day' />
+            <div className={styles.dts_header__dateInputWrapper}>
+              <TextField
+                aria-label='Selected date'
+                value='Tuesday, 04/28'
+                className={styles.dts_header__dateInput}
+                size='sm'
+                endAdornment={<Icon iconName='calendar' />}
+              />
+            </div>
+            <IconButton buttonVariant='ghost' iconName='chevron-right' aria-label='Next day' />
+          </div>
+        </div>
+
+        <div className={styles.dts_header__actions}>
+          <Button buttonVariant='solid'>Save</Button>
+          <Button buttonVariant='outlined'>List Timecards</Button>
+          <Button buttonVariant='ghost'>Clear All Changes</Button>
+        </div>
+
+        <div className={styles.dts_header__secondary}>
+          <AdditionalFieldsSelect selectedCols={extraCols} onChange={onExtraColsChange} />
+        </div>
+
+      </div>
+    </header>
+  );
+}

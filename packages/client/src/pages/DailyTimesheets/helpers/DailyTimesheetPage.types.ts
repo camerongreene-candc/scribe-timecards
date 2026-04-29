@@ -1,0 +1,59 @@
+export type Confidence = 'high' | 'medium' | 'low';
+
+export interface EmployeeRow {
+  id: string;
+  _confidence?: Partial<Record<string, Confidence>>;
+  // default visible
+  firstName: string;
+  lastName: string;
+  department: string;
+  union: string;
+  dayType: string;
+  workZone: string;
+  callTime: string;
+  meal1Out: string;
+  lastManIn: string;
+  wrap: string;
+  dailyAllow: string;
+  country: string;
+  state: string;
+  city: string;
+  occupation: string;
+  account: string;
+  epi: string;
+  rate: string;
+  ff1: string;
+  // additional fields
+  ndb: string;
+  ndbOut: string;
+  ndbEnd: string;
+  ndm: string;
+  ndmOut: string;
+  ndmEnd: string;
+  meal2Out: string;
+  meal2In: string;
+  meal3Out: string;
+  hours: string;
+  county: string;
+  dealMemo: string;
+  onProd: string;
+  hboex15: string;
+  hboex20: string;
+  grace1: string;
+  grace2: string;
+  french: string;
+  ser: string;
+  loc: string;
+  set: string;
+  workComp: string;
+  ff2: string;
+  ff3: string;
+  ff4: string;
+  ins: string;
+  subDivision: string;
+  cck: string;
+  sch: string;
+  frenchLimit: string;
+  liveCk: string;
+  status: string;
+}

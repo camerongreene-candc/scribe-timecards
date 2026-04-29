@@ -1,0 +1,19 @@
+.mediumConfidence :global([class*='spotlight_input']) {
+  border-color: var(--color-border-attention-secondary);
+  background-color: var(--color-background-attention-secondary);
+  transition: 0.3s border-color;
+}
+
+.discrepancyWarning :global([class*='spotlight_input']) {
+  border-color: var(--color-border-critical-secondary);
+  transition: 0.3s border-color;
+}
+
+.discrepancyIcon {
+  color: var(--color-content-critical-primary);
+}
+
+.discrepancyTooltip {
+  display: flex;
+  align-items: center;
+}

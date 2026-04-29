@@ -201,8 +201,7 @@
   flex-shrink: 0;
   margin: var(--space-md) 0;
   border-radius: var(--table-space-border-radius-primary);
-  border: var(--table-border-weight-primary) solid
-    var(--table-color-border-primary);
+  border: var(--table-border-weight-primary) solid var(--table-color-border-primary);
   overflow: hidden;
 }
 

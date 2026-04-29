@@ -20,3 +20,7 @@
   color: var(--color-text-secondary);
   font-size: var(--font-size-lg);
 }
+
+.app_header {
+  position: sticky;
+}
