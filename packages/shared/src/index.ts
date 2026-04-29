@@ -26,14 +26,18 @@ export type ExtractedDayType =
 export interface ExtractedTimecardData {
   employee: {
     fullName: string
+    middleInitial: string | null
     role: string
+    department: string
     dealMemoCode: string
     unionCode: string
     occupationCode: string
   }
   project: {
     title: string
+    code: string | null
     productionCompany: string
+    productionCompanyCode: string | null
   }
   workDate: string        // ISO date "YYYY-MM-DD"
   dayType: ExtractedDayType
@@ -66,7 +70,7 @@ export interface ExtractedTimecardData {
   confidence: ExtractionConfidence
 
   // Travel & movement
-  startTravel: number | null      // hours
+  startTravel: string | null      // "HH:MM" clock time
   startTravelTo: number | null
   travelFrom: number | null
   travelTo: number | null
@@ -136,8 +140,11 @@ export type TimecardStatus =
 export type DayTypeCode = 'W' | 'H' | 'V' | 'S' | 'R' | 'T'
 
 export interface DayType {
+  id: string | null
   code: DayTypeCode
   name: string
+  splittable: boolean
+  requiresTimes: boolean
 }
 
 export interface CodedValue {
@@ -157,20 +164,28 @@ export interface DealMemo {
   id: string
   code: string
   name: string
-  union: Pick<CodedValue, 'code' | 'name'>
-  occupationCode: Pick<CodedValue, 'code' | 'name'>
+  union: CodedValue
+  occupationCode: CodedValue
+  htgContract: CodedValue | null
   rate: number
+  jobDescription: string | null
+  isValid: boolean | null
+  exempt: boolean | null
 }
 
 export interface Employee {
-  id: number
+  id: string          // Worksight ID
   firstName: string
   lastName: string
+  middleInitial: string | null
   occupationCode: string
+  departmentId: number
+  departmentName: string
 }
 
 export interface TimecardDay {
   date: string
+  htgDayTypeId: string | null
   dayType: DayType
   htgDealMemoId: string
   accountCode: string
@@ -182,6 +197,7 @@ export interface TimecardDay {
   call: string | null
   meal1Out: string | null
   meal1In: string | null
+  lastMan1In: string | null       // Last Man In (meal 1)
   meal1Override: number | null
   meal2Out: string | null
   meal2In: string | null
@@ -199,7 +215,7 @@ export interface TimecardDay {
   location: string | null
 
   // Travel & movement
-  startTravel: number | null
+  startTravel: string | null      // "HH:MM" time
   startTravelTo: number | null
   travelFrom: number | null
   travelTo: number | null
@@ -254,14 +270,28 @@ export interface TimecardDay {
   dgaProdFeePrep: boolean         // DGA Prod Fee Prep
 }
 
+export interface Project {
+  id: string
+  code: string
+  name: string
+}
+
+export interface ProductionCompany {
+  id: string
+  code: string
+  name: string
+}
+
 export interface Timecard {
   id: number
   entryHeaderId: string
-  projectId: number
-  projectName: string
+  project: Project
+  productionCompany: ProductionCompany
   employee: Employee
-  startsOn: string   // ISO date
-  endsOn: string
+  departmentId: number
+  departmentName: string
+  weekStartingDate: string   // ISO date "YYYY-MM-DD"
+  weekEndingDate: string
   status: TimecardStatus
   worksightStatus: string
   batchId: number | null

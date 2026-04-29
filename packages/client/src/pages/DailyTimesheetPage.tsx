@@ -6,7 +6,7 @@
  * <select> → AutocompleteInput. No MUI imports.
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   Button,
   Icon,
@@ -16,6 +16,7 @@ import {
   AutocompleteInput,
 } from '@castandcrew/platform-ui';
 import type { ColumnDef } from '@tanstack/react-table';
+import type { ApiResponse, ExtractedTimecardData } from '@scribe-timecards/shared';
 import styles from './DailyTimesheetPage.module.css';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -35,12 +36,6 @@ interface EmployeeRow {
   wrap: string;
   dailyAllow: string;
   country: string;
-}
-
-interface FilterSectionData {
-  key: string;
-  label: string;
-  count: number | null;
 }
 
 // ─── Static seed data matching screenshot ─────────────────────────────────────
@@ -294,6 +289,20 @@ const DAY_TYPE_OPTIONS = toOpts(['1 - WORK', '2 - HOLIDAY', '3 - TRAVEL', '4 - S
 const WORK_ZONE_OPTIONS = toOpts(['Studio', 'Location', 'Distant', 'Home']);
 const COUNTRY_OPTIONS   = toOpts(['United States', 'Canada']);
 
+const DAY_TYPE_LABEL: Record<string, string> = {
+  Worked: '1 - WORK',
+  Holiday: '2 - HOLIDAY',
+  Travel: '3 - TRAVEL',
+  Sick: '4 - SICK',
+  Vacation: '5 - VACATION',
+  Rest: '',
+};
+
+const COUNTRY_NAME: Record<string, string> = {
+  US: 'United States',
+  CA: 'Canada',
+};
+
 // ─── Column definitions ───────────────────────────────────────────────────────
 
 const DTS_COLUMNS: ColumnDef<EmployeeRow, unknown>[] = [
@@ -325,7 +334,7 @@ const DTS_COLUMNS: ColumnDef<EmployeeRow, unknown>[] = [
       <AutocompleteInput
         aria-label='Day Type'
         options={DAY_TYPE_OPTIONS}
-        defaultSelectedKey={getValue() as string}
+        value={getValue() as string}
         className={styles.dts_cellSelect}
         popoverClassName={styles.dts_cellSelectPopover}
       />
@@ -339,7 +348,7 @@ const DTS_COLUMNS: ColumnDef<EmployeeRow, unknown>[] = [
       <AutocompleteInput
         aria-label='Work Zone'
         options={WORK_ZONE_OPTIONS}
-        defaultSelectedKey={getValue() as string}
+        value={getValue() as string}
         className={styles.dts_cellSelect}
       />
     ),
@@ -441,7 +450,7 @@ const DTS_COLUMNS: ColumnDef<EmployeeRow, unknown>[] = [
       <AutocompleteInput
         aria-label='Country'
         options={COUNTRY_OPTIONS}
-        defaultSelectedKey={getValue() as string}
+        value={getValue() as string}
         className={styles.dts_cellSelect}
       />
     ),
@@ -451,6 +460,37 @@ const DTS_COLUMNS: ColumnDef<EmployeeRow, unknown>[] = [
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function DailyTimesheetPage() {
+  const [rows, setRows] = useState<EmployeeRow[]>(SAMPLE_ROWS);
+  const [extracting, setExtracting] = useState(false);
+
+  async function handleExtract() {
+    setExtracting(true);
+    try {
+      const res = await fetch('/api/process', { method: 'POST' });
+      const json: ApiResponse<{ extracted: ExtractedTimecardData }> = await res.json();
+      const ext = json.data.extracted;
+      const [firstName, lastName = ''] = ext.employee.fullName.split(' ').map((n) => n.toUpperCase());
+      setRows((prev) =>
+        prev.map((r) => {
+          const storedLast = r.lastName.replace(/\.+$/, '');
+          const matches = r.firstName === firstName && lastName.startsWith(storedLast);
+          return matches
+            ? {
+                ...r,
+                dayType: DAY_TYPE_LABEL[ext.dayType] ?? '',
+                callTime: ext.callTime ?? '',
+                meal1Out: ext.meal1Out ?? '',
+                meal1In: ext.meal1In ?? '',
+                wrap: ext.wrapTime ?? '',
+                country: COUNTRY_NAME[ext.workZone.country] ?? ext.workZone.country,
+              }
+            : r;
+        })
+      );
+    } finally {
+      setExtracting(false);
+    }
+  }
 
   return (
     <div className={styles.dts_page}>
@@ -493,6 +533,13 @@ export default function DailyTimesheetPage() {
 
             {/* Additional Fields (column-visibility trigger) */}
             <div className={styles.dts_header__secondary}>
+              <Button // extracting button
+                buttonVariant='outlined'
+                isDisabled={extracting}
+                onPress={handleExtract}
+              >
+                {extracting ? 'Extracting…' : 'Extract from Report'}
+              </Button>
               <Button buttonVariant='outlined'>Additional Fields</Button>
             </div>
           </div>
@@ -501,7 +548,7 @@ export default function DailyTimesheetPage() {
         {/* Data table */}
         <div className={styles.dts_tableWrapper}>
           <GridTable<EmployeeRow>
-            data={SAMPLE_ROWS}
+            data={rows}
             columns={DTS_COLUMNS}
             enableSorting
             enablePagination={false}

@@ -5,6 +5,8 @@ import type {
   DealMemo,
   ExtractedDayType,
   ExtractedTimecardData,
+  ProductionCompany,
+  Project,
   Timecard,
   TimecardDay,
   WorkZone,
@@ -15,12 +17,12 @@ import type {
 // ---------------------------------------------------------------------------
 
 const DAY_TYPE_MAP: Record<ExtractedDayType, DayType> = {
-  Worked:   { code: 'W', name: 'Worked' },
-  Holiday:  { code: 'H', name: 'Holiday' },
-  Vacation: { code: 'V', name: 'Vacation' },
-  Sick:     { code: 'S', name: 'Sick' },
-  Rest:     { code: 'R', name: 'Rest' },
-  Travel:   { code: 'T', name: 'Travel' },
+  Worked:   { id: null, code: 'W', name: 'Worked',   splittable: true,  requiresTimes: true  },
+  Holiday:  { id: null, code: 'H', name: 'Holiday',  splittable: false, requiresTimes: false },
+  Vacation: { id: null, code: 'V', name: 'Vacation', splittable: false, requiresTimes: false },
+  Sick:     { id: null, code: 'S', name: 'Sick',     splittable: false, requiresTimes: false },
+  Rest:     { id: null, code: 'R', name: 'Rest',     splittable: false, requiresTimes: false },
+  Travel:   { id: null, code: 'T', name: 'Travel',   splittable: false, requiresTimes: true  },
 }
 
 const STATE_NAMES: Record<string, string> = {
@@ -85,11 +87,12 @@ function addDays(isoDate: string, n: number): string {
 function restDay(date: string, dealMemoId: string): TimecardDay {
   return {
     date,
-    dayType: { code: 'R' as DayTypeCode, name: 'Rest' },
+    htgDayTypeId: null,
+    dayType: { id: null, code: 'R' as DayTypeCode, name: 'Rest', splittable: false, requiresTimes: false },
     htgDealMemoId: dealMemoId,
     accountCode: '', rate: 0, hoursWorked: 0, workZone: null,
     call: null,
-    meal1Out: null, meal1In: null, meal1Override: null,
+    meal1Out: null, meal1In: null, lastMan1In: null, meal1Override: null,
     meal2Out: null, meal2In: null, meal2Override: null,
     meal3Out: null, meal3In: null, meal3Override: null,
     wrap: null, mpOverride: null,
@@ -113,6 +116,7 @@ function restDay(date: string, dealMemoId: string): TimecardDay {
 function workedDay(e: ExtractedTimecardData, dealMemoId: string): TimecardDay {
   return {
     date:          e.workDate,
+    htgDayTypeId:  null,
     dayType:       DAY_TYPE_MAP[e.dayType],
     htgDealMemoId: dealMemoId,
     accountCode:   e.accountCode,
@@ -122,7 +126,7 @@ function workedDay(e: ExtractedTimecardData, dealMemoId: string): TimecardDay {
 
     // Times read directly from the production report
     call:          e.callTime,
-    meal1Out:      e.meal1Out,   meal1In: e.meal1In,   meal1Override: e.meal1Override,
+    meal1Out:      e.meal1Out,   meal1In: e.meal1In,   lastMan1In: null,   meal1Override: e.meal1Override,
     meal2Out:      e.meal2Out,   meal2In: e.meal2In,   meal2Override: e.meal2Override,
     meal3Out:      e.meal3Out,   meal3In: e.meal3In,   meal3Override: e.meal3Override,
     wrap:          e.wrapTime,   mpOverride: e.mpOverride,
@@ -177,16 +181,29 @@ function workedDay(e: ExtractedTimecardData, dealMemoId: string): TimecardDay {
 // ---------------------------------------------------------------------------
 
 export function mapExtractionToTimecard(e: ExtractedTimecardData): Timecard {
-  const [firstName, ...rest] = e.employee.fullName.trim().split(' ')
-  const lastName   = rest.join(' ')
-  const dealMemoId = e.employee.dealMemoCode
-  const startsOn   = weekStart(e.workDate)
-  const endsOn     = addDays(startsOn, 6)
-  const workZone   = toWorkZone(e.workZone)
+  const nameParts     = e.employee.fullName.trim().split(' ')
+  const firstName     = nameParts[0]
+  const lastName      = nameParts.slice(-1)[0]
+  const dealMemoId    = e.employee.dealMemoCode
+  const weekStartDate = weekStart(e.workDate)
+  const weekEndDate   = addDays(weekStartDate, 6)
+  const workZone      = toWorkZone(e.workZone)
+
+  const project: Project = {
+    id:   '',                  // resolved from hours+ project context at submission time
+    code: e.project.code ?? '',
+    name: e.project.title,
+  }
+
+  const productionCompany: ProductionCompany = {
+    id:   '',                  // resolved from hours+ project context at submission time
+    code: e.project.productionCompanyCode ?? '',
+    name: e.project.productionCompany,
+  }
 
   // Build the full Mon–Sun week: one real day, six rest days
   const days: TimecardDay[] = Array.from({ length: 7 }, (_, i) => {
-    const date = addDays(startsOn, i)
+    const date = addDays(weekStartDate, i)
     return date === e.workDate ? workedDay(e, dealMemoId) : restDay(date, dealMemoId)
   })
 
@@ -194,19 +211,33 @@ export function mapExtractionToTimecard(e: ExtractedTimecardData): Timecard {
     id:             dealMemoId,
     code:           e.employee.dealMemoCode,
     name:           `${e.employee.dealMemoCode} — ${e.employee.role}`,
-    union:          { code: e.employee.unionCode,      name: e.employee.unionCode },
-    occupationCode: { code: e.employee.occupationCode, name: e.employee.role },
+    union:          { id: e.employee.unionCode, code: e.employee.unionCode, name: e.employee.unionCode },
+    occupationCode: { id: e.employee.occupationCode, code: e.employee.occupationCode, name: e.employee.role },
+    htgContract:    null,
     rate:           e.dailyRate,
+    jobDescription: e.employee.role,
+    isValid:        true,
+    exempt:         false,
   }
 
   return {
     id:             0,            // hours+ assigns on save
     entryHeaderId:  '',           // hours+ assigns on save
-    projectId:      0,            // provided by hours+ context at submission time
-    projectName:    e.project.title,
-    employee: { id: 0, firstName, lastName, occupationCode: e.employee.occupationCode },
-    startsOn,
-    endsOn,
+    project,
+    productionCompany,
+    employee: {
+      id:             '',          // Worksight ID — resolved at submission time
+      firstName,
+      lastName,
+      middleInitial:  e.employee.middleInitial,
+      occupationCode: e.employee.occupationCode,
+      departmentId:   0,
+      departmentName: e.employee.department,
+    },
+    departmentId:    0,
+    departmentName:  e.employee.department,
+    weekStartingDate: weekStartDate,
+    weekEndingDate:   weekEndDate,
     status:          'draft',
     worksightStatus: 'DRAFT',
     batchId:         null,
