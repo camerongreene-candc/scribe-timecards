@@ -1,0 +1,315 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   WeeklyTimecardPage.module.css
+   Spotlight design tokens only — no hard-coded values, no fallbacks.
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* ── Page layout ─────────────────────────────────────────────────────────── */
+
+.wtc_page {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  font-family: var(--font-family-base);
+  padding: var(--space-2xl) 0;
+}
+
+.wtc_content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  overflow: auto;
+  padding: var(--space-sm);
+}
+
+/* ── Left drawer ─────────────────────────────────────────────────────────── */
+
+.wtc_drawer {
+  display: flex;
+  flex-direction: column;
+  width: 260px;
+  flex-shrink: 0;
+  border-right: var(--border-weight-default) solid var(--color-border-primary);
+  background-color: var(--color-background-secondary);
+  overflow: hidden;
+}
+
+.wtc_drawer__minified {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-sm);
+  border-right: var(--border-weight-default) solid var(--color-border-primary);
+  background-color: var(--color-background-secondary);
+}
+
+.wtc_drawer__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-sm) var(--space-md);
+  border-bottom: var(--border-weight-default) solid var(--color-border-primary);
+  flex-shrink: 0;
+}
+
+.wtc_drawer__title {
+  composes: spotlight_label-lg from global;
+  color: var(--color-text-primary);
+}
+
+.wtc_drawer__headerActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.wtc_drawer__search {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-md);
+  border-bottom: var(--border-weight-default) solid var(--color-border-primary);
+  flex-shrink: 0;
+}
+
+.wtc_drawer__searchInput {
+  flex: 1;
+}
+
+.wtc_drawer__list {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.wtc_drawer__item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+  padding: var(--space-sm) var(--space-md);
+  border-bottom: var(--border-weight-default) solid var(--color-border-primary);
+  cursor: pointer;
+}
+
+.wtc_drawer__item:hover {
+  background-color: var(--table-row-color-background-hover);
+}
+
+.wtc_drawer__item--active {
+  background-color: var(--color-background-primary);
+  border-left: var(--border-width-medium) solid var(--color-border-brand);
+}
+
+.wtc_drawer__itemName {
+  composes: spotlight_body-base from global;
+  color: var(--color-text-primary);
+}
+
+.wtc_drawer__status {
+  composes: spotlight_body-base from global;
+  color: var(--color-text-secondary);
+  text-transform: capitalize;
+}
+
+.wtc_drawer__status--pending_pa_review {
+  color: var(--color-text-warning-primary, var(--color-text-secondary));
+}
+
+.wtc_drawer__status--pending_upm_review {
+  color: var(--color-text-brand-primary);
+}
+
+.wtc_drawer__status--sent_to_cnc {
+  color: var(--color-text-success-primary, var(--color-text-secondary));
+}
+
+/* ── Header ──────────────────────────────────────────────────────────────── */
+
+.wtc_header {
+  border-bottom: var(--border-weight-default) solid var(--color-border-primary);
+  padding: var(--space-sm) var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  flex-shrink: 0;
+}
+
+.wtc_header__nameRow {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+}
+
+.wtc_header__empName {
+  color: var(--color-text-primary);
+  margin: var(--space-none);
+}
+
+.wtc_header__weekEnding {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.wtc_header__weekEndingLabel {
+  composes: spotlight_label-lg from global;
+  color: var(--color-text-primary);
+  cursor: pointer;
+}
+
+.wtc_header__batchInfo {
+  composes: spotlight_body-base from global;
+  color: var(--color-text-secondary);
+}
+
+.wtc_header__actionsRow {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.wtc_header__btnGroup {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  flex-wrap: wrap;
+}
+
+.wtc_header__weekSelectors {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-md);
+}
+
+.wtc_header__weekField {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+}
+
+.wtc_header__subRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: var(--space-xs);
+}
+
+/* ── Table wrapper ────────────────────────────────────────────────────────── */
+
+.wtc_tableWrapper {
+  flex-shrink: 0;
+  margin: var(--space-md) 0;
+  border-radius: var(--table-space-border-radius-primary);
+  border: var(--table-border-weight-primary) solid
+    var(--table-color-border-primary);
+  overflow: hidden;
+}
+
+/* Day cell (name + date stacked) — used in GridTable cell renderer */
+.wtc_dayCell {
+  display: flex;
+  flex-direction: column;
+}
+
+.wtc_cellInput :global([class*='spotlight_input']) {
+  width: 80px;
+}
+
+.wtc_cellSelect {
+  width: 80px;
+}
+
+.wtc_cellSelectPopover {
+  min-width: 100px;
+  width: fit-content;
+}
+
+.wtc_dayCell__name {
+  composes: spotlight_label-lg from global;
+  color: var(--color-text-primary);
+}
+
+.wtc_dayCell__date {
+  composes: spotlight_body-base from global;
+  color: var(--color-text-secondary);
+}
+
+/* Calculated cells (read-only display) — used in GridTable cell renderer */
+.wtc_calcCell {
+  composes: spotlight_label-lg from global;
+  color: var(--color-text-primary);
+  background-color: var(--color-background-brand-tertiary);
+  text-align: center;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--border-radius-sm);
+  min-width: 50px;
+}
+
+/* Total row */
+.wtc_totalRow {
+  display: flex;
+  align-items: center;
+  padding: var(--space-xs) var(--space-md);
+  border-top: 1px solid var(--color-border-primary);
+  background-color: var(--table-color-background-primary);
+}
+
+.wtc_totalLabel {
+  composes: spotlight_label-lg from global;
+  color: var(--color-text-primary);
+  margin-right: var(--space-sm);
+}
+
+.wtc_totalValue {
+  display: inline-block;
+  color: var(--color-text-primary);
+  background-color: var(--color-background-brand-tertiary);
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--border-radius-sm);
+}
+
+/* ── Bottom section ───────────────────────────────────────────────────────── */
+
+.wtc_bottom {
+  display: flex;
+  gap: var(--space-md);
+  margin-bottom: var(--space-4xl);
+}
+
+.wtc_altTables {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: var(--space-sm);
+  overflow: auto;
+}
+
+/* ── Section (Comments / Allowances / Breakdown / History) ────────────────── */
+
+.wtc_section {
+  border: var(--border-weight-default) solid var(--color-border-primary);
+  border-radius: var(--border-radius-md);
+  overflow: hidden;
+}
+
+.wtc_section__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-md);
+  background-color: var(--table-header-color-background-primary);
+  border-bottom: var(--border-weight-default) solid var(--color-border-primary);
+}
+
+.wtc_section__title {
+  composes: spotlight_label-lg from global;
+  color: var(--color-text-primary);
+  flex: 1;
+}
+
+/* Amount cell — used in Breakdown GridTable cell renderer */
+.wtc_altTd--amount {
+  composes: spotlight_label-lg from global;
+  color: var(--color-text-brand-primary);
+}

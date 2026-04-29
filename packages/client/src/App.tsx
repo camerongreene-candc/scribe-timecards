@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ProductNavigation } from '@castandcrew/platform-ui';
-import DailyTimesheetPage from './DailyTimesheetPage';
+import DailyTimesheetPage from './pages/DailyTimesheetPage';
+import WeeklyTimecardPage from './pages/WeeklyTimecardPage';
 import styles from './App.module.css';
 
 const NAV_LINKS = [
@@ -22,7 +23,7 @@ export default function App() {
       <main className={styles.app_main}>
         {selectedKey === 'daily-timesheets' && <DailyTimesheetPage />}
         {selectedKey === 'timesheet' && (
-          <div className={styles.app_placeholder}>Timesheet coming soon</div>
+          <WeeklyTimecardPage />
         )}
       </main>
     </div>

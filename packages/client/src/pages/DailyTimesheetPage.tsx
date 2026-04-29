@@ -3,7 +3,7 @@
  * No Redux, no API calls — static seed data + minimal UI state only.
  *
  * Migration: hand-rolled table → GridTable, <input> → TextField,
- * <select> → SelectInputField + Option. No MUI imports.
+ * <select> → AutocompleteInput. No MUI imports.
  */
 
 import React, { useState } from 'react';
@@ -11,15 +11,12 @@ import {
   Button,
   Icon,
   IconButton,
-  Badge,
   GridTable,
   TextField,
-  SelectInputField,
-  Option,
+  AutocompleteInput,
 } from '@castandcrew/platform-ui';
 import type { ColumnDef } from '@tanstack/react-table';
 import styles from './DailyTimesheetPage.module.css';
-
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -291,27 +288,11 @@ const SAMPLE_ROWS: EmployeeRow[] = [
   },
 ];
 
-const DAY_TYPE_OPTIONS = [
-  '',
-  '1 - WORK',
-  '2 - HOLIDAY',
-  '3 - TRAVEL',
-  '4 - SICK',
-  '5 - VACATION',
-];
-const WORK_ZONE_OPTIONS = ['', 'Studio', 'Location', 'Distant', 'Home'];
-const COUNTRY_OPTIONS = ['United States', 'Canada'];
+const toOpts = (vals: string[]) => vals.map((v) => ({ id: v, label: v }));
 
-const FILTER_SECTIONS: FilterSectionData[] = [
-  { key: 'department', label: 'Department', count: 2 },
-  { key: 'batch', label: 'Batch', count: null },
-  { key: 'employee', label: 'Employee', count: 15 },
-  { key: 'account', label: 'Account', count: 7 },
-  { key: 'episode', label: 'Episode', count: 1 },
-  { key: 'set', label: 'Set', count: 1 },
-  { key: 'union', label: 'Union', count: 6 },
-  { key: 'offerStatus', label: 'Offer Status', count: 5 },
-];
+const DAY_TYPE_OPTIONS = toOpts(['1 - WORK', '2 - HOLIDAY', '3 - TRAVEL', '4 - SICK', '5 - VACATION']);
+const WORK_ZONE_OPTIONS = toOpts(['Studio', 'Location', 'Distant', 'Home']);
+const COUNTRY_OPTIONS   = toOpts(['United States', 'Canada']);
 
 // ─── Column definitions ───────────────────────────────────────────────────────
 
@@ -341,19 +322,13 @@ const DTS_COLUMNS: ColumnDef<EmployeeRow, unknown>[] = [
     accessorKey: 'dayType',
     header: 'Day Type',
     cell: ({ getValue }) => (
-      <SelectInputField
+      <AutocompleteInput
         aria-label='Day Type'
+        options={DAY_TYPE_OPTIONS}
         defaultSelectedKey={getValue() as string}
         className={styles.dts_cellSelect}
-        isPopoverAutoSized
-        
-      >
-        {DAY_TYPE_OPTIONS.map((o) => (
-          <Option key={o === '' ? '__empty__' : o} value={o}>
-            {o || ' '}
-          </Option>
-        ))}
-      </SelectInputField>
+        popoverClassName={styles.dts_cellSelectPopover}
+      />
     ),
   },
   {
@@ -361,19 +336,12 @@ const DTS_COLUMNS: ColumnDef<EmployeeRow, unknown>[] = [
     accessorKey: 'workZone',
     header: 'Work Zone',
     cell: ({ getValue }) => (
-      <SelectInputField
+      <AutocompleteInput
         aria-label='Work Zone'
+        options={WORK_ZONE_OPTIONS}
         defaultSelectedKey={getValue() as string}
         className={styles.dts_cellSelect}
-        isPopoverAutoSized
-        
-      >
-        {WORK_ZONE_OPTIONS.map((o) => (
-          <Option key={o === '' ? '__empty__' : o} value={o}>
-            {o || ' '}
-          </Option>
-        ))}
-      </SelectInputField>
+      />
     ),
   },
   {
@@ -390,7 +358,6 @@ const DTS_COLUMNS: ColumnDef<EmployeeRow, unknown>[] = [
       <TextField
         aria-label='Call Time'
         value={getValue() as string}
-        
         className={styles.dts_cellInput}
         isFullWidth
         size='sm'
@@ -405,7 +372,6 @@ const DTS_COLUMNS: ColumnDef<EmployeeRow, unknown>[] = [
       <TextField
         aria-label='Meal 1 Out'
         value={getValue() as string}
-        
         isFullWidth
         className={styles.dts_cellInput}
         size='sm'
@@ -420,7 +386,6 @@ const DTS_COLUMNS: ColumnDef<EmployeeRow, unknown>[] = [
       <TextField
         aria-label='Meal 1 In'
         value={getValue() as string}
-        
         isFullWidth
         className={styles.dts_cellInput}
         size='sm'
@@ -435,7 +400,6 @@ const DTS_COLUMNS: ColumnDef<EmployeeRow, unknown>[] = [
       <TextField
         aria-label='Last Man In'
         value={getValue() as string}
-        
         isFullWidth
         className={styles.dts_cellInput}
         size='sm'
@@ -450,7 +414,6 @@ const DTS_COLUMNS: ColumnDef<EmployeeRow, unknown>[] = [
       <TextField
         aria-label='Wrap'
         value={getValue() as string}
-        
         isFullWidth
         className={styles.dts_cellInput}
         size='sm'
@@ -465,7 +428,6 @@ const DTS_COLUMNS: ColumnDef<EmployeeRow, unknown>[] = [
       <TextField
         aria-label='Daily Allow'
         value={getValue() as string}
-        
         className={styles.dts_cellInput}
         size='sm'
       />
@@ -476,50 +438,19 @@ const DTS_COLUMNS: ColumnDef<EmployeeRow, unknown>[] = [
     accessorKey: 'country',
     header: 'Country',
     cell: ({ getValue }) => (
-      <SelectInputField
+      <AutocompleteInput
         aria-label='Country'
+        options={COUNTRY_OPTIONS}
         defaultSelectedKey={getValue() as string}
         className={styles.dts_cellSelect}
-        isPopoverAutoSized
-        
-      >
-        {COUNTRY_OPTIONS.map((o) => (
-          <Option key={o} value={o}>
-            {o}
-          </Option>
-        ))}
-      </SelectInputField>
+      />
     ),
   },
 ];
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
-
-function FilterSection({
-  label,
-  count,
-}: {
-  label: string;
-  count: number | null;
-}) {
-  return (
-    <div className={styles.dts_filterSection}>
-      <div className={styles.dts_filterSectionHeader}>
-        <span className={styles.dts_filterSectionLabel}>{label}</span>
-        <div className={styles.dts_filterSectionRight}>
-          {count != null && <Badge badgeValue={count} />}
-          <Icon iconName='chevron-down' size='sm' />
-        </div>
-      </div>
-    </div>
-  );
-}
-
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function DailyTimesheetPage() {
-  const [showFilters, setShowFilters] = useState(true);
-  const [timesheetType, setTimesheetType] = useState<'cast' | 'crew'>('crew');
 
   return (
     <div className={styles.dts_page}>
@@ -540,7 +471,6 @@ export default function DailyTimesheetPage() {
                   <TextField
                     aria-label='Selected date'
                     value='Tuesday, 04/28'
-                    
                     className={styles.dts_header__dateInput}
                     size='sm'
                     endAdornment={<Icon iconName='calendar' />}
@@ -583,67 +513,6 @@ export default function DailyTimesheetPage() {
           />
         </div>
       </div>
-
-      {/* ── Right filter panel ─────────────────────────────── */}
-      <aside className={styles.dts_filtersPane}>
-        <div className={styles.dts_filtersSeparator} />
-
-        {showFilters ? (
-          <div className={`spotlight_container ${styles.dts_filtersInner}`}>
-            <div className={styles.dts_filtersHeader}>
-              <span className={styles.dts_filtersTitle}>
-                Refine Your Search
-              </span>
-              <Button
-                buttonVariant='ghost'
-                startAdornment='chevron-right'
-                aria-label='Collapse filters'
-                onClick={() => setShowFilters(false)}
-              />
-            </div>
-
-            <div className={styles.dts_filtersControls}>
-              <Button buttonVariant='ghost' size='sm' isDestructive>
-                Reset Filters
-              </Button>
-              <Button buttonVariant='ghost' size='sm'>
-                Expand All
-              </Button>
-            </div>
-
-            {/* Cast / Crew segmented toggle */}
-            <div className={styles.dts_castCrewToggle}>
-              <button
-                className={`${styles.dts_toggleBtn} ${timesheetType === 'cast' ? styles['dts_toggleBtn--active'] : ''}`}
-                onClick={() => setTimesheetType('cast')}
-              >
-                Cast
-              </button>
-              <button
-                className={`${styles.dts_toggleBtn} ${timesheetType === 'crew' ? styles['dts_toggleBtn--active'] : ''}`}
-                onClick={() => setTimesheetType('crew')}
-              >
-                Crew
-              </button>
-            </div>
-
-            <div className={styles.dts_filtersList}>
-              {FILTER_SECTIONS.map((s) => (
-                <FilterSection key={s.key} label={s.label} count={s.count} />
-              ))}
-            </div>
-          </div>
-        ) : (
-          <div className={styles.dts_filtersMinified}>
-            <Button
-              buttonVariant='ghost'
-              startAdornment='chevron-left'
-              aria-label='Expand filters'
-              onClick={() => setShowFilters(true)}
-            />
-          </div>
-        )}
-      </aside>
     </div>
   );
 }
