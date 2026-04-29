@@ -14,7 +14,53 @@ export interface HealthResponse {
 //  JSON Schema object for output_config.format.schema mirrors this shape
 // ---------------------------------------------------------------------------
 
-export type ExtractionConfidence = 'high' | 'medium' | 'low'
+export interface Confident<T> {
+  value: T
+  confident: boolean
+}
+
+export interface ExtractionEmployee {
+  fullName: Confident<string>
+  middleInitial: Confident<string | null>
+  role: Confident<string>
+  department: Confident<string>
+  dealMemoCode: Confident<string>
+  unionCode: Confident<string>
+  occupationCode: Confident<string>
+}
+
+export interface ExtractionTimecard {
+  employee: ExtractionEmployee
+  workDate: Confident<string>
+  dayType: Confident<ExtractedDayType>
+  callTime: Confident<string | null>
+  meal1Out: Confident<string | null>
+  meal1In: Confident<string | null>
+  meal2Out: Confident<string | null>
+  meal2In: Confident<string | null>
+  meal3Out: Confident<string | null>
+  meal3In: Confident<string | null>
+  wrapTime: Confident<string | null>
+  dailyRate: Confident<number>
+  workZone: Confident<{ country: string; state: string; city: string }>
+  accountCode: Confident<string>
+  series: Confident<string | null>
+  episode: Confident<string | null>
+  set: Confident<string | null>
+  location: Confident<string | null>
+}
+
+export interface ExtractionProduction {
+  title: Confident<string>
+  code: Confident<string | null>
+  productionCompany: Confident<string>
+  productionCompanyCode: Confident<string | null>
+}
+
+export interface ExtractionResult {
+  production: ExtractionProduction
+  timecards: ExtractionTimecard[]
+}
 
 export type ExtractedDayType =
   | 'Worked'
@@ -69,7 +115,6 @@ export interface ExtractedTimecardData {
   set: string | null
   location: string | null
   notes: string | null
-  confidence: ExtractionConfidence
 
   // Travel & movement
   startTravel: string | null      // "HH:MM" clock time

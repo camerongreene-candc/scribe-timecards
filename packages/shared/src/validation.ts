@@ -361,6 +361,10 @@ export type DTSDay = z.infer<typeof DTSDaySchema>
 
 export type ProcessResponse = { employeeName: string; day: Partial<DTSDay> }
 
+export type FieldConfidenceMap = { employeeName: string; flaggedFields: string[] }
+
+export type ProcessApiResponse = { results: ProcessResponse[]; confidence: FieldConfidenceMap[] }
+
 // ─── Transform: extracted day → DTS day ──────────────────────────────────────
 
 export const extractedToDTSDay = (

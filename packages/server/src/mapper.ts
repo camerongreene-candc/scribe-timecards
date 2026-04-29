@@ -1,4 +1,4 @@
-import type { ExtractedTimecardData, ExtractedDayType } from '@scribe-timecards/shared'
+import type { ExtractionTimecard, ExtractedDayType } from '@scribe-timecards/shared'
 import { timeStringToDecimal, calcHoursWorked } from '@scribe-timecards/shared'
 import type { DTSDay } from '@scribe-timecards/shared'
 
@@ -53,20 +53,22 @@ function codedValue(code: string, nameMap: Record<string, string>) {
 // Public
 // ---------------------------------------------------------------------------
 
-export function mapExtractionToDTSDay(e: ExtractedTimecardData): Partial<DTSDay> {
-  const call     = toDecimal(e.callTime)
-  const meal1Out = toDecimal(e.meal1Out)
-  const meal1In  = toDecimal(e.meal1In)
-  const meal2Out = toDecimal(e.meal2Out)
-  const meal2In  = toDecimal(e.meal2In)
-  const meal3Out = toDecimal(e.meal3Out)
-  const meal3In  = toDecimal(e.meal3In)
-  const wrap     = toDecimal(e.wrapTime)
+export function mapTimecardToDay(t: ExtractionTimecard): Partial<DTSDay> {
+  const call     = toDecimal(t.callTime.value)
+  const meal1Out = toDecimal(t.meal1Out.value)
+  const meal1In  = toDecimal(t.meal1In.value)
+  const meal2Out = toDecimal(t.meal2Out.value)
+  const meal2In  = toDecimal(t.meal2In.value)
+  const meal3Out = toDecimal(t.meal3Out.value)
+  const meal3In  = toDecimal(t.meal3In.value)
+  const wrap     = toDecimal(t.wrapTime.value)
+
+  const zone = t.workZone.value
 
   return {
-    effectiveDate: `${e.workDate}T00:00:00`,
-    dayType:       { id: DAY_TYPE_CODES[e.dayType], code: DAY_TYPE_CODES[e.dayType], name: e.dayType },
-    rate:          e.dailyRate,
+    effectiveDate: `${t.workDate.value}T00:00:00`,
+    dayType:       { id: DAY_TYPE_CODES[t.dayType.value], code: DAY_TYPE_CODES[t.dayType.value], name: t.dayType.value },
+    rate:          t.dailyRate.value,
     hoursWorked:   calcHoursWorked({ callTime: call, wrapTime: wrap, meal1Out, meal1In, meal2Out, meal2In, meal3Out, meal3In }),
     callTime:      call,
     meal1Out,
@@ -76,17 +78,26 @@ export function mapExtractionToDTSDay(e: ExtractedTimecardData): Partial<DTSDay>
     meal3Out,
     meal3In,
     wrapTime:      wrap,
-    ndbOut:        e.ndbOut,
-    ndbIn:         e.ndbIn,
-    ndmOut:        e.ndmOut,
-    ndmIn:         e.ndmIn,
-    workCountry:   codedValue(e.workZone.country, COUNTRY_NAMES),
-    workState:     e.workZone.state ? codedValue(e.workZone.state, STATE_NAMES) : null,
-    workCity:      e.workZone.city  ? { id: e.workZone.city, code: e.workZone.city.slice(0, 3).toUpperCase(), name: e.workZone.city } : null,
-    accountCode:   e.accountCode,
-    series:        e.series   ?? undefined,
-    set:           e.set      ?? undefined,
-    location:      e.location ?? undefined,
-    episode:       e.episode  ? { id: e.episode, code: e.episode, name: e.episode } : undefined,
+    workCountry:   codedValue(zone.country, COUNTRY_NAMES),
+    workState:     zone.state ? codedValue(zone.state, STATE_NAMES) : null,
+    workCity:      zone.city  ? { id: zone.city, code: zone.city.slice(0, 3).toUpperCase(), name: zone.city } : null,
+    accountCode:   t.accountCode.value,
+    series:        t.series.value   ?? undefined,
+    set:           t.set.value      ?? undefined,
+    location:      t.location.value ?? undefined,
+    episode:       t.episode.value  ? { id: t.episode.value, code: t.episode.value, name: t.episode.value } : undefined,
   }
+}
+
+const FIELD_NAMES: (keyof ExtractionTimecard)[] = [
+  'callTime', 'meal1Out', 'meal1In', 'meal2Out', 'meal2In',
+  'meal3Out', 'meal3In', 'wrapTime', 'dayType', 'workDate',
+  'dailyRate', 'workZone', 'accountCode', 'series', 'episode', 'set', 'location',
+]
+
+export function mapTimecardToFlaggedFields(t: ExtractionTimecard): string[] {
+  return FIELD_NAMES.filter((key) => {
+    const field = t[key] as { confident: boolean }
+    return !field.confident
+  })
 }
