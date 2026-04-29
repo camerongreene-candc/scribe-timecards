@@ -1,0 +1,11 @@
+@layer spotlight-tokens, spotlight-ui.base, spotlight-ui.components, spotlight-ui;
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}

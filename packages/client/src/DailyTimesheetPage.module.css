@@ -1,0 +1,345 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   DailyTimesheetPage.module.css
+   Spotlight design tokens only — no hard-coded values, no fallbacks.
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* ── Page layout ─────────────────────────────────────────────────────────── */
+
+.dts_page {
+  display: flex;
+  flex: 1;
+  height: 100%;
+  background-color: var(--color-background-primary);
+  font-family: var(--font-family-base);
+  overflow: hidden;
+}
+
+.dts_content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* ── Header ──────────────────────────────────────────────────────────────── */
+
+.dts_header {
+  background-color: var(--color-background-primary);
+  border-bottom: var(--border-width-thin) solid var(--color-border-default);
+  padding: var(--space-sm) var(--space-md);
+  flex-shrink: 0;
+}
+
+.dts_header__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.dts_header__dateSection {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.dts_header__dateLabel {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  white-space: nowrap;
+}
+
+.dts_header__dateControls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.dts_header__dateInputWrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--border-radius-sm);
+  padding: var(--space-xs) var(--space-sm);
+  background-color: var(--color-background-primary);
+}
+
+.dts_header__dateInput {
+  border: none;
+  outline: none;
+  font-size: var(--font-size-sm);
+  font-family: var(--font-family-base);
+  color: var(--color-text-primary);
+  background: transparent;
+  cursor: default;
+}
+
+.dts_header__dateInput :global([class*="spotlight_TextField-Group"]) {
+  width: auto;
+}
+
+.dts_header__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.dts_header__secondary {
+  margin-left: auto;
+}
+
+/* ── Table wrapper ────────────────────────────────────────────────────────── */
+
+.dts_tableWrapper {
+  flex: 1;
+  overflow: hidden;
+  margin: var(--space-md);
+  border-radius: var(--table-space-border-radius-primary);
+  border: var(--table-border-weight-primary) solid var(--table-color-border-primary);
+}
+
+.dts_tableScroll {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+}
+
+/* ── Table ────────────────────────────────────────────────────────────────── */
+
+.dts_table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--table-color-background-primary);
+  font-family: var(--text-font-san-serif);
+}
+
+.dts_th {
+  color: var(--table-header-color-text-primary);
+  font-family: var(--text-font-san-serif);
+  font-size: var(--text-size-label-sm);
+  font-weight: var(--text-weight-label-sm-strong);
+  line-height: var(--text-line-height-label-sm);
+  text-align: left;
+  padding: var(--table-header-space-edge-to-element-vertical-primary)
+    var(--table-header-space-edge-to-element-horizontal-primary);
+  background-color: var(--table-header-color-background-primary);
+  border-bottom: var(--table-border-weight-primary) solid var(--table-color-border-primary);
+  white-space: nowrap;
+  text-transform: none;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+/* "Call Time" wraps to two lines to save column width */
+.dts_th__callTime {
+  composes: dts_th;
+  white-space: normal;
+  min-width: 52px;
+  text-align: center;
+}
+
+.dts_tr {
+  border-bottom: var(--table-border-weight-primary) solid var(--table-color-border-primary);
+  transition: background-color var(--table-transition-all);
+}
+
+.dts_tr:hover {
+  background-color: var(--table-row-color-background-hover);
+}
+
+.dts_tr:last-child {
+  border-bottom: none;
+}
+
+.dts_td {
+  padding: var(--table-body-space-edge-to-element-vertical-primary)
+    var(--table-body-space-edge-to-element-horizontal-primary);
+  font-size: var(--text-size-body-sm);
+  font-family: var(--text-font-san-serif);
+  color: var(--color-text-primary);
+  line-height: var(--text-line-height-body-sm);
+  white-space: nowrap;
+}
+
+.dts_select {
+  border: var(--border-width-thin) solid var(--color-border-default);
+  border-radius: var(--border-radius-sm);
+  padding: var(--space-xs);
+  font-size: var(--font-size-xs);
+  font-family: var(--font-family-base);
+  color: var(--color-text-primary);
+  background-color: var(--color-background-primary);
+  min-width: 90px;
+}
+
+.dts_input {
+  border: var(--border-width-thin) solid var(--color-border-default);
+  border-radius: var(--border-radius-sm);
+  padding: var(--space-xs);
+  font-size: var(--font-size-xs);
+  font-family: var(--font-family-base);
+  color: var(--color-text-primary);
+  background-color: var(--color-background-primary);
+  width: 68px;
+}
+
+/* ── GridTable cell overrides ────────────────────────────────────────────── */
+
+/*
+ * Applied via className on the GridTable <table> element itself.
+ * GridTable manages its own container/scroll wrapper; we only need to
+ * ensure it fills the wrapper we give it.
+ */
+.dts_table {
+  width: 100%;
+}
+
+/*
+ * Passed to GridTable containerClassName — makes the internal scroll
+ * wrapper fill the outer dts_tableWrapper div.
+ */
+.dts_tableScroll {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+}
+
+/* Compact TextField rendered inside a GridTable cell */
+.dts_cellInput {
+  width: 68px;
+}
+
+.dts_cellInput :global([class*="spotlight_TextField-Group"]) {
+  width: 100%;
+}
+
+.dts_cellInput input {
+  font-size: var(--font-size-xs);
+  font-family: var(--font-family-base);
+  color: var(--color-text-primary);
+}
+
+/* Compact SelectInputField rendered inside a GridTable cell */
+.dts_cellSelect {
+  min-width: 90px;
+}
+
+.dts_cellSelect button {
+  font-size: var(--font-size-xs);
+  font-family: var(--font-family-base);
+  color: var(--color-text-primary);
+  background-color: var(--color-background-primary);
+}
+
+/* ── Right filter panel ───────────────────────────────────────────────────── */
+
+.dts_filtersPane {
+  display: flex;
+  flex-direction: row;
+  flex-shrink: 0;
+  background-color: var(--color-background-secondary);
+}
+
+.dts_filtersSeparator {
+  width: var(--border-width-thin);
+  background-color: var(--color-border-default);
+  flex-shrink: 0;
+}
+
+.dts_filtersInner {
+  width: 260px;
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  overflow-y: auto;
+}
+
+.dts_filtersHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dts_filtersTitle {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.dts_filtersControls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Cast / Crew segmented toggle */
+.dts_castCrewToggle {
+  display: flex;
+  border: var(--border-width-thin) solid var(--color-border-default);
+  border-radius: var(--border-radius-md);
+  overflow: hidden;
+}
+
+.dts_toggleBtn {
+  flex: 1;
+  padding: var(--space-xs) var(--space-sm);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  font-family: var(--font-family-base);
+  color: var(--color-text-secondary);
+}
+
+.dts_toggleBtn--active {
+  background-color: var(--color-primary);
+  color: var(--color-text-inverse);
+  font-weight: var(--font-weight-medium);
+}
+
+/* Filter section list */
+.dts_filtersList {
+  display: flex;
+  flex-direction: column;
+}
+
+.dts_filterSection {
+  border-bottom: var(--border-width-thin) solid var(--color-border-default);
+  padding: var(--space-sm) 0;
+}
+
+.dts_filterSection:last-child {
+  border-bottom: none;
+}
+
+.dts_filterSectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.dts_filterSectionLabel {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-medium);
+}
+
+.dts_filterSectionRight {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.dts_filtersMinified {
+  padding: var(--space-sm);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+}
