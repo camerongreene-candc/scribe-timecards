@@ -1,5 +1,5 @@
 import type { ProcessApiResponse, RosterEmployee, DTSDay } from '@scribe-timecards/shared';
-import { decimalToTimeString, timeStringToDecimal, getValidationFlaggedFields } from '@scribe-timecards/shared';
+import { timeStringToDecimal, getValidationFlaggedFields } from '@scribe-timecards/shared';
 import type { EmployeeRow } from './DailyTimesheetPage.types';
 
 export const toOpts = (vals: string[]) => vals.map((v) => ({ id: v, label: v }));
@@ -19,10 +19,10 @@ export const COUNTRY_OPTIONS   = toOpts(['United States', 'Canada']);
 
 const emptyRow = (id: string, firstName: string, lastName: string, department: string, union: string): EmployeeRow => ({
   id, firstName, lastName, department, union,
-  occupation: '', dayType: '', workZone: '', callTime: '', meal1Out: '', lastManIn: '',
+  occupation: '', dayType: '', workZone: '', callTime: '', meal1Out: '', meal1In: '', lastManIn: '',
   wrap: '', dailyAllow: '', country: '', state: '', city: '',
   account: '', epi: '', rate: '', ff1: '',
-  ndb: '', ndbOut: '', ndbEnd: '', ndm: '', ndmOut: '', ndmEnd: '',
+  ndb: false, ndbOut: '', ndbEnd: '', ndm: '', ndmOut: '', ndmEnd: '',
   meal2Out: '', meal2In: '', meal3Out: '', hours: '', county: '', dealMemo: '',
   onProd: '', hboex15: '', hboex20: '', grace1: '', grace2: '', french: '',
   ser: '', loc: '', set: '', workComp: '', ff2: '', ff3: '', ff4: '',
@@ -30,7 +30,7 @@ const emptyRow = (id: string, firstName: string, lastName: string, department: s
 });
 
 export function rosterToRow(emp: RosterEmployee, i: number): EmployeeRow {
-  return { ...emptyRow(String(i + 1), emp.firstName, emp.lastName, emp.department, emp.union), occupation: emp.occupation, dealMemo: emp.dealMemo };
+  return { ...emptyRow(String(i + 1), emp.firstName, emp.lastName, emp.department, emp.union), occupation: emp.occupation, dealMemo: emp.dealMemo ?? '' };
 }
 
 export const SAMPLE_ROWS: EmployeeRow[] = [
@@ -42,7 +42,6 @@ export const SAMPLE_ROWS: EmployeeRow[] = [
 // Maps DTSDay field names (from validation) to EmployeeRow field names
 const VALIDATION_FIELD_MAP: Record<string, string> = {
   wrapTime:    'wrap',
-  meal1In:     'lastManIn',
   LastMan1In:  'lastManIn',
   workCountry: 'country',
   workState:   'state',
@@ -59,7 +58,8 @@ export function validateRow(row: EmployeeRow): Partial<Record<string, string>> {
   const day: Partial<DTSDay> = {
     callTime:    td(row.callTime),
     meal1Out:    td(row.meal1Out),
-    meal1In:     td(row.lastManIn),
+    meal1In:     td(row.meal1In),
+    LastMan1In:  td(row.lastManIn),
     meal2Out:    td(row.meal2Out),
     meal2In:     td(row.meal2In),
     meal3Out:    td(row.meal3Out),
@@ -94,13 +94,14 @@ export function applyExtractToRows(prev: EmployeeRow[], { results, confidence, v
     const { day } = match;
     const flagged = new Set(confidence.find((c) => c.employeeName === match.employeeName)?.flaggedFields ?? []);
     const ok = (f: string) => !flagged.has(f);
-    const st = (v: number | null | undefined) => (v != null ? decimalToTimeString(v) : '');
+    const st = (v: number | null | undefined) => (v != null ? String(v) : '');
     return {
       ...row,
       dayType:   (day.dayType?.name ? DAY_TYPE_NAME_MAP[day.dayType.name] : undefined) ?? row.dayType,
       callTime:  st(day.callTime)        || row.callTime,
       meal1Out:  st(day.meal1Out)        || row.meal1Out,
-      lastManIn: st(day.meal1In)         || row.lastManIn,
+      meal1In:   st(day.meal1In)         || row.meal1In,
+      lastManIn: st(day.LastMan1In)      || row.lastManIn,
       meal2Out:  st(day.meal2Out)        || row.meal2Out,
       meal2In:   st(day.meal2In)         || row.meal2In,
       meal3Out:  st(day.meal3Out)        || row.meal3Out,
@@ -118,7 +119,8 @@ export function applyExtractToRows(prev: EmployeeRow[], { results, confidence, v
         dayType:   ok('dayType'),
         callTime:  ok('callTime'),
         meal1Out:  ok('meal1Out'),
-        lastManIn: ok('meal1In'),
+        meal1In:   ok('meal1In'),
+        lastManIn: ok('LastMan1In'),
         meal2Out:  ok('meal2Out'),
         meal2In:   ok('meal2In'),
         meal3Out:  ok('meal3Out'),

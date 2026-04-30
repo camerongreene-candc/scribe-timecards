@@ -30,6 +30,7 @@ const DTS_TIME_FIELD_ORDER = [
 ] as const
 
 export const timeStringToDecimal = (t: string): number => {
+  if (!t.includes(':')) return parseFloat(t)
   const [h, m] = t.split(':').map(Number)
   return h + m / 60
 }

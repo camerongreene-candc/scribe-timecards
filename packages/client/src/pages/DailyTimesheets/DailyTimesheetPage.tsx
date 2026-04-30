@@ -4,7 +4,7 @@ import type { ProcessApiResponse, RosterResult } from '@scribe-timecards/shared'
 import type { ColumnDef } from '@tanstack/react-table';
 import type { EmployeeRow } from './helpers/DailyTimesheetPage.types';
 import { applyExtractToRows, rosterToRow, validateRow } from './helpers/DailyTimesheetPage.data';
-import { makeDefaultColumns, ADDITIONAL_FIELD_DEFS, makeTF, makeStatic } from './helpers/DailyTimesheetPage.columns';
+import { makeDefaultColumns, ADDITIONAL_FIELD_DEFS, makeTF, makeStatic, makeCheckbox } from './helpers/DailyTimesheetPage.columns';
 import DailyTimesheetHeader from './components/DailyTimesheetHeader';
 import { ReviewBar } from '../../components/review-bar/ReviewBar';
 import { ReviewContext, ReviewStore } from '../../components/review-bar/ReviewContext';
@@ -52,7 +52,8 @@ export default function DailyTimesheetPage() {
     const DAY_FIELD_TO_COL: Record<string, string> = { series: 'ser', location: 'loc' };
     const populated = new Set<string>();
     for (const { day } of data.results) {
-      for (const field of Object.keys(day)) {
+      for (const [field, value] of Object.entries(day)) {
+        if (value == null || value === '') continue;
         const colId = DAY_FIELD_TO_COL[field] ?? field;
         if (additionalIds.has(colId)) populated.add(colId);
       }
@@ -81,7 +82,7 @@ export default function DailyTimesheetPage() {
   }, []);
 
   const handleCellChange = useCallback(
-    (rowId: string, field: string, value: string) => {
+    (rowId: string, field: string, value: string | boolean) => {
       setRows((prev) =>
         prev.map((row) => {
           if (row.id !== rowId) return row;
@@ -262,7 +263,7 @@ export default function DailyTimesheetPage() {
     () => [
       ...makeDefaultColumns(),
       ...ADDITIONAL_FIELD_DEFS.filter((f) => extraCols.has(f.id)).map((f) =>
-        f.readonly ? makeStatic(f.id, f.label) : makeTF(f.id, f.label),
+        f.readonly ? makeStatic(f.id, f.label) : f.type === 'checkbox' ? makeCheckbox(f.id, f.label) : makeTF(f.id, f.label),
       ),
     ],
     [extraCols],

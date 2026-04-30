@@ -13,6 +13,7 @@ export interface EmployeeRow {
   workZone: string;
   callTime: string;
   meal1Out: string;
+  meal1In: string;
   lastManIn: string;
   wrap: string;
   dailyAllow: string;
@@ -25,7 +26,7 @@ export interface EmployeeRow {
   rate: string;
   ff1: string;
   // additional fields
-  ndb: string;
+  ndb: boolean;
   ndbOut: string;
   ndbEnd: string;
   ndm: string;

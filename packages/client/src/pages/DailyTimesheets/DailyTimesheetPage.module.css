@@ -124,6 +124,12 @@
   align-items: center;
 }
 
+.dts_checkboxCell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 /* ── Table wrapper ────────────────────────────────────────────────────────── */
 
 .dts_tableWrapper {

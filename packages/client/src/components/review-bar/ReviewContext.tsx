@@ -35,7 +35,7 @@ export interface ReviewContextValue {
   store: ReviewStore;
   getRowConfidence: (rowId: string, field: string) => boolean;
   getRowDiscrepancy: (rowId: string, field: string) => string | undefined;
-  onCellChange: (rowId: string, field: string, value: string) => void;
+  onCellChange: (rowId: string, field: string, value: string | boolean) => void;
   onCellAccept: (rowId: string, field: string) => void;
   onCellReject: (rowId: string, field: string) => void;
 }

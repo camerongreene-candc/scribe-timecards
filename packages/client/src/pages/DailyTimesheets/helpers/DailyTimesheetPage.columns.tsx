@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState, useSyncExternalStore } from 'react';
+import { Checkbox } from '@castandcrew/platform-ui';
 import AutocompleteInput from '../../../components/AutocompleteInput';
 import { ScribeTextField } from '../components';
 import { useReviewContext } from '../../../components/review-bar/ReviewContext';
@@ -260,6 +261,46 @@ function DTSSelectCell({ rowId, fieldKey, label, options, value }: DTSSelectCell
   );
 }
 
+interface DTSCheckboxCellProps {
+  rowId: string;
+  fieldKey: string;
+  label: string;
+  value: boolean;
+}
+
+function DTSCheckboxCell({ rowId, fieldKey, label, value }: DTSCheckboxCellProps) {
+  const { onCellChange } = useReviewContext();
+  return (
+    <div className={styles.dts_checkboxCell}>
+      <Checkbox
+        aria-label={label}
+        isChecked={value}
+        size='sm'
+        onChange={(_e, checked) => onCellChange(rowId, fieldKey, checked)}
+      />
+    </div>
+  );
+}
+
+export function makeCheckbox(
+  id: keyof EmployeeRow & string,
+  header: string,
+): ColumnDef<EmployeeRow, unknown> {
+  return {
+    id,
+    accessorKey: id,
+    header,
+    cell: ({ row, getValue }) => (
+      <DTSCheckboxCell
+        rowId={row.original.id}
+        fieldKey={id}
+        label={header}
+        value={(getValue() as boolean) ?? false}
+      />
+    ),
+  };
+}
+
 export function makeSelect(
   id: keyof EmployeeRow & string,
   header: string,
@@ -282,14 +323,15 @@ export function makeSelect(
 }
 
 export const DEFAULT_COLUMNS: ColumnDef<EmployeeRow, unknown>[] = [
-    makeStatic('firstName',  'First Name'),
     makeStatic('lastName',   'Last Name'),
+    makeStatic('firstName',  'First Name'),
     makeStatic('department', 'Department'),
     makeStatic('union',      'Union'),
     makeSelect('dayType',  'Day Type',  DAY_TYPE_OPTIONS),
     makeSelect('workZone', 'Work Zone', WORK_ZONE_OPTIONS),
     makeTF('callTime',   () => (<>Call<br />Time</>)),
     makeTF('meal1Out',   'Meal 1 Out'),
+    makeTF('meal1In',    'Meal 1 In'),
     makeTF('lastManIn',  'Last Man In'),
     makeTF('wrap',       'Wrap'),
     makeTF('dailyAllow', 'Daily Allow'),
@@ -311,8 +353,9 @@ export const ADDITIONAL_FIELD_DEFS: {
   id: keyof EmployeeRow & string;
   label: string;
   readonly?: boolean;
+  type?: 'checkbox';
 }[] = [
-  { id: 'ndb', label: 'NDB' },
+  { id: 'ndb', label: 'NDB', type: 'checkbox' },
   { id: 'ndbOut', label: 'NDB Out' },
   { id: 'ndbEnd', label: 'NDB End' },
   { id: 'ndm', label: 'NDM' },
