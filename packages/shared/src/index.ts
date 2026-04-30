@@ -19,6 +19,7 @@ export interface RosterEmployee {
   department: string
   union: string
   occupation: string
+  dealMemo?: string
 }
 
 export interface RosterResult {
