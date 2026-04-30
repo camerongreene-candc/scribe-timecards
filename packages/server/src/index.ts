@@ -1,5 +1,6 @@
 import express from 'express'
 import type { HealthResponse, ApiResponse, ProcessApiResponse } from '@scribe-timecards/shared'
+import { getValidationFlaggedFields } from '@scribe-timecards/shared'
 import { mockClaudeExtract } from './mock-extraction.js'
 import { mapTimecardToDay, mapTimecardToFlaggedFields } from './mapper.js'
 
@@ -26,7 +27,12 @@ app.post('/api/process', async (_req, res) => {
     flaggedFields: mapTimecardToFlaggedFields(t),
   }))
 
-  const body: ApiResponse<ProcessApiResponse> = { data: { results, confidence } }
+  const validation = extraction.timecards.map((t) => ({
+    employeeName: t.employee.fullName.value,
+    flaggedFields: getValidationFlaggedFields(mapTimecardToDay(t)),
+  }))
+
+  const body: ApiResponse<ProcessApiResponse> = { data: { results, confidence, validation } }
   res.json(body)
 })
 
