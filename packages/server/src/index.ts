@@ -3,6 +3,7 @@ import type { HealthResponse, ApiResponse, ProcessApiResponse, RosterResult } fr
 import { getValidationFlaggedFields } from '@scribe-timecards/shared'
 import { mockClaudeExtract, mockRoster } from './mock-extraction.js'
 import { mapTimecardToDay, mapTimecardToFlaggedFields } from './mapper.js'
+import { buildCsv } from './csvHelper.js'
 
 const app = express()
 const PORT = process.env.PORT ?? 3000
@@ -44,6 +45,14 @@ app.post('/api/process', async (_req, res) => {
     console.error('[/api/process]', err)
     res.status(500).json({ error: String(err) })
   }
+})
+
+app.post('/api/export', (req, res) => {
+  const rows = req.body?.rows ?? []
+  const csv = buildCsv(rows)
+  res.setHeader('Content-Type', 'text/csv')
+  res.setHeader('Content-Disposition', 'attachment; filename="timecards.csv"')
+  res.send(csv)
 })
 
 app.listen(PORT, () => {
