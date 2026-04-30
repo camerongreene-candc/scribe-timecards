@@ -287,6 +287,7 @@ export default function DailyTimesheetPage() {
               enablePagination={false}
               stickyHeader
               cellSize='sm'
+              isStriped
               showCellBorders={false}
               className={styles.dts_table}
               containerClassName={styles.dts_tableScroll}
