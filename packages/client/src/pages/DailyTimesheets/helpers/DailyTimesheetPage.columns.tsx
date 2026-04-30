@@ -19,9 +19,10 @@ interface DTSCellProps {
 }
 
 function DTSCell({ rowId, fieldKey, label, value }: DTSCellProps) {
-  const { store, getRowConfidence, onCellChange, onCellAccept } = useReviewContext();
+  const { store, getRowConfidence, getRowDiscrepancy, onCellChange, onCellAccept } = useReviewContext();
 
   const hasConfidence = getRowConfidence(rowId, fieldKey);
+  const discrepancyMessage = getRowDiscrepancy(rowId, fieldKey);
 
   const cellKey = `${rowId}::${fieldKey}`;
   const snapshotCache = useRef({
@@ -98,6 +99,8 @@ function DTSCell({ rowId, fieldKey, label, value }: DTSCellProps) {
         needsReview={hasReviewItems && hasConfidence && !isActive && !(modified || locallyModified)}
         isActive={isActive}
         isAccepted={accepted}
+        isDiscrepancy={!!discrepancyMessage}
+        discrepancyMessage={discrepancyMessage}
         className={styles.dts_cellInput}
         size='sm'
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -191,6 +194,7 @@ function DTSSelectCell({ rowId, fieldKey, label, options, value }: DTSSelectCell
   const cellRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const isDropdownOpen = useRef(false);
+  const enterOnOpen = useRef(false);
 
   useEffect(() => {
     console.log(`[select-focus] ${rowId}::${fieldKey} isActive=${isActive} inputRef=${inputRef.current ? 'attached' : 'null'}`);
@@ -211,13 +215,24 @@ function DTSSelectCell({ rowId, fieldKey, label, options, value }: DTSSelectCell
         options={options}
         selectedKey={value || null}
         onSelectionChange={(key) => {
+          enterOnOpen.current = false;
           onCellChange(rowId, fieldKey, String(key ?? ''));
           onCellAccept(rowId, fieldKey);
         }}
-        onOpenChange={(open) => { isDropdownOpen.current = open; }}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' && !isDropdownOpen.current) {
+        onOpenChange={(open) => {
+          isDropdownOpen.current = open;
+          if (!open && enterOnOpen.current) {
+            enterOnOpen.current = false;
             onCellAccept(rowId, fieldKey);
+          }
+        }}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            if (!isDropdownOpen.current) {
+              onCellAccept(rowId, fieldKey);
+            } else {
+              enterOnOpen.current = true;
+            }
           }
         }}
         className={styles.dts_cellSelect}

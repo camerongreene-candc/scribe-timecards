@@ -3,7 +3,7 @@ import { GridTable, useSnackbar } from '@castandcrew/platform-ui';
 import type { ProcessApiResponse, RosterResult } from '@scribe-timecards/shared';
 import type { ColumnDef } from '@tanstack/react-table';
 import type { EmployeeRow } from './helpers/DailyTimesheetPage.types';
-import { applyExtractToRows, rosterToRow } from './helpers/DailyTimesheetPage.data';
+import { applyExtractToRows, rosterToRow, validateRow } from './helpers/DailyTimesheetPage.data';
 import { makeDefaultColumns, ADDITIONAL_FIELD_DEFS, makeTF } from './helpers/DailyTimesheetPage.columns';
 import DailyTimesheetHeader from './components/DailyTimesheetHeader';
 import { ReviewBar } from '../../components/review-bar/ReviewBar';
@@ -83,9 +83,19 @@ export default function DailyTimesheetPage() {
   const handleCellChange = useCallback(
     (rowId: string, field: string, value: string) => {
       setRows((prev) =>
-        prev.map((row) =>
-          row.id === rowId ? { ...row, [field]: value } : row,
-        ),
+        prev.map((row) => {
+          if (row.id !== rowId) return row;
+          const updated = { ...row, [field]: value };
+          const newErrors = validateRow(updated);
+          const merged = { ...row._discrepancy };
+          // Apply any newly detected errors across all fields
+          for (const [f, msg] of Object.entries(newErrors)) {
+            merged[f] = msg;
+          }
+          // Only clear the edited field's discrepancy if validation no longer flags it
+          if (!newErrors[field]) delete merged[field];
+          return { ...updated, _discrepancy: merged };
+        }),
       );
       setAcceptedKeys((prev) => new Set(prev).add(reviewKey(rowId, field)));
     },
@@ -214,6 +224,14 @@ export default function DailyTimesheetPage() {
     [rowsById],
   );
 
+  const getRowDiscrepancy = useCallback(
+    (rowId: string, field: string): string | undefined => {
+      const row = rowsById.get(rowId);
+      return row?._discrepancy?.[field];
+    },
+    [rowsById],
+  );
+
   const reviewStore = useMemo(() => new ReviewStore(), []);
   const activeRowId = showReviewBar ? (reviewItems[reviewIndex]?.rowId ?? null) : null;
   const activeField = showReviewBar ? (reviewItems[reviewIndex]?.field ?? null) : null;
@@ -232,11 +250,12 @@ export default function DailyTimesheetPage() {
     () => ({
       store: reviewStore,
       getRowConfidence,
+      getRowDiscrepancy,
       onCellChange: handleCellChange,
       onCellAccept: handleCellAccept,
       onCellReject: handleCellReject,
     }),
-    [reviewStore, getRowConfidence, handleCellChange, handleCellAccept, handleCellReject],
+    [reviewStore, getRowConfidence, getRowDiscrepancy, handleCellChange, handleCellAccept, handleCellReject],
   );
 
   const columns = useMemo<ColumnDef<EmployeeRow, unknown>[]>(
