@@ -1,30 +1,43 @@
-import { Icon, Button, GridTable } from '@castandcrew/platform-ui';
+import { Icon, Button, GridTable, ExpandableSection } from '@castandcrew/platform-ui';
 import { COMMENT_ROWS, ALLOWANCE_ROWS, BREAKDOWN_ROWS, HISTORY_ROWS } from '../helpers/WeeklyTimecardPage.data';
 import { COMMENT_COLS, ALLOWANCE_COLS, BREAKDOWN_COLS, HISTORY_COLS } from '../helpers/WeeklyTimecardPage.columns';
 import styles from '../WeeklyTimecardPage.module.css';
 
 export function CommentsSection() {
   return (
-    <section className={styles.wtc_section}>
-      <div className={styles.wtc_section__header}>
-        <Icon iconName='comment' size='sm' />
-        <span className={styles.wtc_section__title}>Comments</span>
-        <Button buttonVariant='ghost' size='xs'>Add Comment</Button>
-      </div>
+    <ExpandableSection
+      defaultExpanded
+      className={styles.wtc_section}
+      headerClassName={styles.wtc_section__header}
+      sectionTitle={
+        <div className={styles.wtc_section__expandableTitle}>
+          <Icon iconName='comment' size='sm' />
+          <span className={styles.wtc_section__title}>Comments</span>
+          <span className={styles.wtc_section__badge}>{COMMENT_ROWS.length}</span>
+          <Button buttonVariant='ghost' size='xs'>Add Comment</Button>
+        </div>
+      }
+    >
       <GridTable data={COMMENT_ROWS} columns={COMMENT_COLS} enablePagination={false} enableSorting={false} />
-    </section>
+    </ExpandableSection>
   );
 }
 
 export function AllowancesSection() {
   return (
-    <section className={styles.wtc_section}>
-      <div className={styles.wtc_section__header}>
-        <Icon iconName='clock' size='sm' />
-        <span className={styles.wtc_section__title}>Allowances</span>
-      </div>
+    <ExpandableSection
+      defaultExpanded
+      className={styles.wtc_section}
+      headerClassName={styles.wtc_section__header}
+      sectionTitle={
+        <div className={styles.wtc_section__expandableTitle}>
+          <Icon iconName='dollar-sign' size='sm' />
+          <span className={styles.wtc_section__title}>Allowances</span>
+        </div>
+      }
+    >
       <GridTable data={ALLOWANCE_ROWS} columns={ALLOWANCE_COLS} enablePagination={false} enableSorting={false} />
-    </section>
+    </ExpandableSection>
   );
 }
 

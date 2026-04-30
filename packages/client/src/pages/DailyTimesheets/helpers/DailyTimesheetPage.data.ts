@@ -1,4 +1,5 @@
 import type { ProcessApiResponse, RosterEmployee } from '@scribe-timecards/shared';
+import { decimalToTimeString } from '@scribe-timecards/shared';
 import type { EmployeeRow } from './DailyTimesheetPage.types';
 
 export const toOpts = (vals: string[]) => vals.map((v) => ({ id: v, label: v }));
@@ -50,17 +51,17 @@ export function applyExtractToRows(prev: EmployeeRow[], { results, confidence }:
     const { day } = match;
     const flagged = new Set(confidence.find((c) => c.employeeName === match.employeeName)?.flaggedFields ?? []);
     const ok = (f: string) => !flagged.has(f);
-    const sv = (v: number | null | undefined) => (v != null ? String(v) : '');
+    const st = (v: number | null | undefined) => (v != null ? decimalToTimeString(v) : '');
     return {
       ...row,
       dayType:   (day.dayType?.name ? DAY_TYPE_NAME_MAP[day.dayType.name] : undefined) ?? row.dayType,
-      callTime:  sv(day.callTime)        || row.callTime,
-      meal1Out:  sv(day.meal1Out)        || row.meal1Out,
-      lastManIn: sv(day.meal1In)         || row.lastManIn,
-      meal2Out:  sv(day.meal2Out)        || row.meal2Out,
-      meal2In:   sv(day.meal2In)         || row.meal2In,
-      meal3Out:  sv(day.meal3Out)        || row.meal3Out,
-      wrap:      sv(day.wrapTime)        || row.wrap,
+      callTime:  st(day.callTime)        || row.callTime,
+      meal1Out:  st(day.meal1Out)        || row.meal1Out,
+      lastManIn: st(day.meal1In)         || row.lastManIn,
+      meal2Out:  st(day.meal2Out)        || row.meal2Out,
+      meal2In:   st(day.meal2In)         || row.meal2In,
+      meal3Out:  st(day.meal3Out)        || row.meal3Out,
+      wrap:      st(day.wrapTime)        || row.wrap,
       country:   day.workCountry?.name   ?? row.country,
       state:     day.workState?.name     ?? row.state,
       city:      day.workCity?.name      ?? row.city,

@@ -65,12 +65,10 @@ function DTSCell({ rowId, fieldKey, label, value }: DTSCellProps) {
   const [locallyModified, setLocallyModified] = useState(false);
 
   // Sync draft when the prop changes externally (e.g. extraction fills data).
-  const prevValueRef = useRef(value);
-  if (prevValueRef.current !== value) {
-    prevValueRef.current = value;
+  useEffect(() => {
     setDraft(value);
     setLocallyModified(false);
-  }
+  }, [value]);
 
   const cellRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -78,7 +76,7 @@ function DTSCell({ rowId, fieldKey, label, value }: DTSCellProps) {
   useEffect(() => {
     console.log(`[text-focus] ${rowId}::${fieldKey} isActive=${isActive} inputRef=${inputRef.current ? 'attached' : 'null'}`);
     if (!isActive) return;
-    cellRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+    cellRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
     const t = setTimeout(() => {
       console.log(`[text-focus] setTimeout fired for ${rowId}::${fieldKey} — inputRef=${inputRef.current ? 'attached' : 'null'} activeElement=${document.activeElement?.tagName}`);
       inputRef.current?.focus();
@@ -106,11 +104,11 @@ function DTSCell({ rowId, fieldKey, label, value }: DTSCellProps) {
           setDraft(e.target.value);
           setLocallyModified(true);
         }}
-        onBlur={() => {
+        onBlur={(e) => {
           commit();
           if (!isActive || !(accepted || locallyModified)) return;
           const reviewBar = document.querySelector('[aria-label="AI confidence review"]');
-          if (reviewBar?.contains(document.activeElement)) return;
+          if (reviewBar?.contains(e.relatedTarget as Node)) return;
           onCellAccept(rowId, fieldKey);
         }}
         inputProps={{
@@ -192,11 +190,12 @@ function DTSSelectCell({ rowId, fieldKey, label, options, value }: DTSSelectCell
 
   const cellRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const isDropdownOpen = useRef(false);
 
   useEffect(() => {
     console.log(`[select-focus] ${rowId}::${fieldKey} isActive=${isActive} inputRef=${inputRef.current ? 'attached' : 'null'}`);
     if (!isActive) return;
-    cellRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+    cellRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
     const t = setTimeout(() => {
       console.log(`[select-focus] setTimeout fired for ${rowId}::${fieldKey} — inputRef=${inputRef.current ? 'attached' : 'null'} activeElement=${document.activeElement?.tagName}`);
       inputRef.current?.focus();
@@ -214,6 +213,12 @@ function DTSSelectCell({ rowId, fieldKey, label, options, value }: DTSSelectCell
         onSelectionChange={(key) => {
           onCellChange(rowId, fieldKey, String(key ?? ''));
           onCellAccept(rowId, fieldKey);
+        }}
+        onOpenChange={(open) => { isDropdownOpen.current = open; }}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' && !isDropdownOpen.current) {
+            onCellAccept(rowId, fieldKey);
+          }
         }}
         className={styles.dts_cellSelect}
         popoverClassName={styles.dts_cellSelectPopover}

@@ -113,6 +113,7 @@ const AutocompleteInput = ({
   onFocus,
   onBlur,
   onClear,
+  onKeyDown,
 
   // Filtering
   filterOption,
@@ -442,6 +443,7 @@ const AutocompleteInput = ({
             setIsFocused(false);
             onBlur?.(e);
           }}
+          onKeyDown={onKeyDown}
         />
         {endAdornment && (
           <span className={styles.spotlight_AutocompleteInput_adornment}>

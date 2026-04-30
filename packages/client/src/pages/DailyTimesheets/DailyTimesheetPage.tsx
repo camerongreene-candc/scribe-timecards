@@ -161,6 +161,21 @@ export default function DailyTimesheetPage() {
 
   useEffect(() => {
     if (!showReviewBar) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const tag = (document.activeElement?.tagName ?? '').toLowerCase();
+      const isEditable =
+        tag === 'input' || tag === 'textarea' || tag === 'select' ||
+        (document.activeElement as HTMLElement)?.isContentEditable;
+      if (isEditable) return;
+      if (e.key === 'ArrowLeft') { e.preventDefault(); handleReviewPrev(); }
+      else if (e.key === 'ArrowRight') { e.preventDefault(); handleReviewNext(); }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [showReviewBar, handleReviewPrev, handleReviewNext]);
+
+  useEffect(() => {
+    if (!showReviewBar) return;
     const item = reviewItems[reviewIndex];
     if (!item) return;
     const row = rowsRef.current.find((r) => r.id === item.rowId);

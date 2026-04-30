@@ -1,6 +1,7 @@
 export interface DrawerTimecard {
   id: number;
   name: string;
+  subtitle?: string;
   status: string;
   active: boolean;
 }

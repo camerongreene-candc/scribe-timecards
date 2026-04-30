@@ -1,4 +1,4 @@
-import type { FocusEvent, ReactNode, RefObject } from 'react';
+import type { FocusEvent, KeyboardEvent, ReactNode, RefObject } from 'react';
 import type { Key } from 'react-aria';
 import type { ComboBoxProps } from 'react-aria-components';
 
@@ -298,6 +298,11 @@ export interface AutocompleteInputProps extends Omit<
    * Only fires when `isClearable` is true.
    */
   onClear?: () => void;
+
+  /**
+   * Called on keydown inside the text input.
+   */
+  onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
 
   // ============================================
   // FILTERING

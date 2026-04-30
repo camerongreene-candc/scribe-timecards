@@ -1,17 +1,23 @@
+import type { RosterEmployee } from '@scribe-timecards/shared';
 import type { DrawerTimecard, DayRow, CommentRow, AllowanceRow, BreakdownRow, HistoryRow } from './WeeklyTimecardPage.types';
+
+export function rosterToDrawerTimecard(emp: RosterEmployee, i: number): DrawerTimecard {
+  const name = `${emp.lastName.toUpperCase()}, ${emp.firstName}`;
+  return { id: i + 1, name, subtitle: emp.occupation || emp.department, status: 'draft', active: i === 0 };
+}
 
 export const EMPLOYEE = { name: 'ALFONSO, JENNIFER', weekEnding: '03-14-2026' };
 export const BATCH    = { code: '3249577', name: 'Test – 03-14-2026' };
 
 export const DRAWER_TIMECARDS: DrawerTimecard[] = [
-  { id: 1, name: 'ALFONSO, Jennifer',    status: 'pending_pa_review',  active: true  },
-  { id: 2, name: 'TOMASSI, Rolo',        status: 'draft',              active: false },
-  { id: 3, name: 'RENQUIST, Harry',      status: 'pending_pa_review',  active: false },
-  { id: 4, name: 'DANIKA, Renny',        status: 'pending_upm_review', active: false },
-  { id: 5, name: 'BEN, Bonjourno',       status: 'draft',              active: false },
-  { id: 6, name: 'DARREN, Nalaco',       status: 'sent_to_cnc',        active: false },
-  { id: 7, name: 'VALIDATION, Amy',      status: 'draft',              active: false },
-  { id: 8, name: 'CIRNFBHUKQM, Mary Ann', status: 'pending_pa_review', active: false },
+  { id: 1, name: 'ALFONSO, Jennifer',     subtitle: '21632A – PROD. FINAL CHECKER / MARK UP 2ND 6 MONTHS', status: 'pending_pa_review',  active: true  },
+  { id: 2, name: 'TOMASSI, Rolo',         subtitle: '10200A – CAMERA OPERATOR',                            status: 'draft',              active: false },
+  { id: 3, name: 'RENQUIST, Harry',       subtitle: '21632A – PROD. FINAL CHECKER / MARK UP 2ND 6 MONTHS', status: 'pending_pa_review',  active: false },
+  { id: 4, name: 'DANIKA, Renny',         subtitle: '30100B – GAFFER',                                     status: 'pending_upm_review', active: false },
+  { id: 5, name: 'BEN, Bonjourno',        subtitle: '20100A – KEY GRIP',                                   status: 'draft',              active: false },
+  { id: 6, name: 'DARREN, Nalaco',        subtitle: '10100C – DIRECTOR OF PHOTOGRAPHY',                    status: 'sent_to_cnc',        active: false },
+  { id: 7, name: 'VALIDATION, Amy',       subtitle: '50200A – SCRIPT SUPERVISOR',                          status: 'draft',              active: false },
+  { id: 8, name: 'CIRNFBHUKQM, Mary Ann', subtitle: '21632A – PROD. FINAL CHECKER / MARK UP 2ND 6 MONTHS', status: 'pending_pa_review', active: false },
 ];
 
 export const WEEK_DATES = [

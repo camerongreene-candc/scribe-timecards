@@ -25,7 +25,7 @@ export function ReviewBar({
   return (
     <div className={styles.reviewBar} role="region" aria-label="AI confidence review">
       <div className={styles.reviewBar__label}>
-        {remainingCount} of {totalCount} {totalCount === 1 ? 'field needs' : 'fields need'} review
+        {remainingCount} {totalCount === 1 ? 'field needs' : 'fields need'} review
       </div>
 
       <div className={styles.reviewBar__divider} />
