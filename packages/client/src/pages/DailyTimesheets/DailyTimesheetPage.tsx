@@ -21,7 +21,7 @@ export default function DailyTimesheetPage() {
   return (
     <div className={styles.dts_page}>
       <div className={styles.dts_content}>
-        <DailyTimesheetHeader extraCols={extraCols} onExtraColsChange={setExtraCols} />
+        <DailyTimesheetHeader extraCols={extraCols} onExtraColsChange={setExtraCols} onExtractComplete={() => {}} />
 
         <div className={styles.dts_tableWrapper}>
           <GridTable<EmployeeRow>
