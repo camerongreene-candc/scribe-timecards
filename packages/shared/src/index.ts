@@ -10,6 +10,22 @@ export interface HealthResponse {
 }
 
 // ---------------------------------------------------------------------------
+// Hours+ roster — employees already in the H+ system for a given day and project
+// ---------------------------------------------------------------------------
+
+export interface RosterEmployee {
+  firstName: string
+  lastName: string
+  department: string
+  union: string
+  occupation: string
+}
+
+export interface RosterResult {
+  employees: RosterEmployee[]
+}
+
+// ---------------------------------------------------------------------------
 // structured output from claude
 //  JSON Schema object for output_config.format.schema mirrors this shape
 // ---------------------------------------------------------------------------

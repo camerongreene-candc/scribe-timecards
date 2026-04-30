@@ -1,4 +1,4 @@
-import type { ExtractionResult } from '@scribe-timecards/shared'
+import type { ExtractionResult, RosterResult } from '@scribe-timecards/shared'
 
 // JSON Schema passed to output_config.format.schema in the real API call.
 // Kept here so the real implementation can import and reuse it.
@@ -149,6 +149,16 @@ export const timecardExtractionSchema = {
 //     response.content.find(b => b.type === 'text')!.text
 //   )
 // ---------------------------------------------------------------------------
+
+export function mockRoster(): RosterResult {
+  return {
+    employees: [
+      { firstName: 'Joanna',  lastName: 'Saczek',    department: 'COVID', union: 'CCO', occupation: 'CCO' },
+      { firstName: 'Allan',   lastName: 'Gaitirira', department: 'COVID', union: 'CCC', occupation: 'CCC' },
+      { firstName: 'Kristin', lastName: 'Peavler',   department: 'COVID', union: 'CTC', occupation: 'CTC' },
+    ],
+  }
+}
 
 export async function mockClaudeExtract(): Promise<ExtractionResult> {
   await new Promise((resolve) => setTimeout(resolve, 1400))

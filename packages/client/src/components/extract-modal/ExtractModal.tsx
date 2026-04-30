@@ -21,7 +21,7 @@ export function ExtractModal({ onComplete }: ExtractModalProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [step, setStep] = useState<Step>('upload');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const apiResultRef = useRef<ProcessResponse | null>(null);
+  const apiResultRef = useRef<ProcessApiResponse | null>(null);
   const animDoneRef = useRef(false);
 
   function handleOpenChange(open: boolean) {

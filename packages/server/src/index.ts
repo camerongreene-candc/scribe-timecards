@@ -1,7 +1,7 @@
 import express from 'express'
-import type { HealthResponse, ApiResponse, ProcessApiResponse, ExtractionResult } from '@scribe-timecards/shared'
+import type { HealthResponse, ApiResponse, ProcessApiResponse, RosterResult } from '@scribe-timecards/shared'
 import { getValidationFlaggedFields } from '@scribe-timecards/shared'
-import { mockClaudeExtract } from './mock-extraction.js'
+import { mockClaudeExtract, mockRoster } from './mock-extraction.js'
 import { mapTimecardToDay, mapTimecardToFlaggedFields } from './mapper.js'
 
 const app = express()
@@ -14,15 +14,9 @@ app.get('/api/health', (_req, res) => {
   res.json(body)
 })
 
-app.get('/api/extract', async (_req, res) => {
-  try {
-    const extraction = await mockClaudeExtract()
-    const body: ApiResponse<ExtractionResult> = { data: extraction }
-    res.json(body)
-  } catch (err) {
-    console.error('[/api/extract]', err)
-    res.status(500).json({ error: String(err) })
-  }
+app.get('/api/extract', (_req, res) => {
+  const body: ApiResponse<RosterResult> = { data: mockRoster() }
+  res.json(body)
 })
 
 app.post('/api/process', async (_req, res) => {

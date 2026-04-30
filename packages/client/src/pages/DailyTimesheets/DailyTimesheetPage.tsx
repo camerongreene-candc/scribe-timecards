@@ -1,9 +1,9 @@
 import { useState, useEffect, useMemo } from 'react';
 import { GridTable } from '@castandcrew/platform-ui';
-import type { ExtractionResult } from '@scribe-timecards/shared';
+import type { ProcessApiResponse } from '@scribe-timecards/shared';
 import type { ColumnDef } from '@tanstack/react-table';
 import type { EmployeeRow } from './helpers/DailyTimesheetPage.types';
-import { timecardToRow } from './helpers/DailyTimesheetPage.data';
+import { rosterToRow, applyExtractToRows } from './helpers/DailyTimesheetPage.data';
 import { makeDefaultColumns, ADDITIONAL_FIELD_DEFS, makeTF } from './helpers/DailyTimesheetPage.columns';
 import DailyTimesheetHeader from './components/DailyTimesheetHeader';
 import styles from './DailyTimesheetPage.module.css';
@@ -11,21 +11,28 @@ import styles from './DailyTimesheetPage.module.css';
 export default function DailyTimesheetPage() {
   const [rows, setRows] = useState<EmployeeRow[]>([]);
   const [extraCols, setExtraCols] = useState<Set<string>>(new Set());
+
   useEffect(() => {
     fetch('/api/extract')
       .then((res) => res.json())
-      .then(({ data }: { data: ExtractionResult }) => {
-        const newRows = data.timecards.map(timecardToRow);
-        setRows(newRows);
-        const populated = new Set<string>();
-        for (const row of newRows) {
-          for (const { id } of ADDITIONAL_FIELD_DEFS) {
-            if (row[id as keyof EmployeeRow]) populated.add(id);
-          }
-        }
-        setExtraCols(populated);
+      .then(({ data }) => {
+        setRows(data.employees.map(rosterToRow));
       });
   }, []);
+
+  function handleExtractComplete(data: ProcessApiResponse) {
+    setRows((prev) => {
+      const next = applyExtractToRows(prev, data);
+      const populated = new Set<string>();
+      for (const row of next) {
+        for (const { id } of ADDITIONAL_FIELD_DEFS) {
+          if (row[id as keyof EmployeeRow]) populated.add(id);
+        }
+      }
+      setExtraCols(populated);
+      return next;
+    });
+  }
 
   const columns = useMemo<ColumnDef<EmployeeRow, unknown>[]>(
     () => [
@@ -41,7 +48,7 @@ export default function DailyTimesheetPage() {
         <DailyTimesheetHeader
           extraCols={extraCols}
           onExtraColsChange={setExtraCols}
-          onExtractComplete={() => {}}
+          onExtractComplete={handleExtractComplete}
         />
 
         <div className={styles.dts_tableWrapper}>
