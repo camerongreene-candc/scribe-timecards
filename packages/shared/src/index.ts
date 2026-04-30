@@ -33,14 +33,14 @@ export interface ExtractionTimecard {
   employee: ExtractionEmployee
   workDate: Confident<string>
   dayType: Confident<ExtractedDayType>
-  callTime: Confident<string | null>
-  meal1Out: Confident<string | null>
-  meal1In: Confident<string | null>
-  meal2Out: Confident<string | null>
-  meal2In: Confident<string | null>
-  meal3Out: Confident<string | null>
-  meal3In: Confident<string | null>
-  wrapTime: Confident<string | null>
+  callTime: Confident<string | number | null>
+  meal1Out: Confident<string | number | null>
+  meal1In: Confident<string | number | null>
+  meal2Out: Confident<string | number | null>
+  meal2In: Confident<string | number | null>
+  meal3Out: Confident<string | number | null>
+  meal3In: Confident<string | number | null>
+  wrapTime: Confident<string | number | null>
   dailyRate: Confident<number>
   workZone: Confident<{ country: string; state: string; city: string }>
   accountCode: Confident<string>
