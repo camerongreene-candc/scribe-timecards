@@ -5,15 +5,19 @@ import AdditionalFieldsSelect from './AdditionalFieldsSelect';
 import styles from '../DailyTimesheetPage.module.css';
 
 interface DailyTimesheetHeaderProps {
+  projectId: string;
   extraCols: Set<string>;
   onExtraColsChange: (cols: Set<string>) => void;
   onExtractComplete: (data: ProcessApiResponse) => void;
+  onSave: () => void;
 }
 
 export default function DailyTimesheetHeader({
+  projectId,
   extraCols,
   onExtraColsChange,
   onExtractComplete,
+  onSave,
 }: DailyTimesheetHeaderProps) {
   return (
     <header className={styles.dts_header}>
@@ -44,9 +48,9 @@ export default function DailyTimesheetHeader({
         </div>
 
         <div className={styles.dts_header__actions}>
-          <Button buttonVariant='solid'>Save</Button>
+          <Button buttonVariant='solid' onPress={onSave}>Save</Button>
           <Button buttonVariant='outlined'>List Timecards</Button>
-          <ExtractModal onComplete={onExtractComplete} />
+          <ExtractModal projectId={projectId} onComplete={onExtractComplete} />
           <Button buttonVariant='ghost'>Clear All Changes</Button>
         </div>
 

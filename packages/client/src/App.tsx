@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   Navigate,
   Route,
@@ -27,10 +28,11 @@ export default function App() {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const selectedKey = pathname.replace(/^\//, '') || 'daily-timesheets';
+  const [projectId, setProjectId] = useState('static-bloom');
 
   return (
     <div className={styles.app_root}>
-      <AppHeader />
+      <AppHeader selectedProjectId={projectId} onProjectSelect={setProjectId} />
 
       <div className={styles.app_body}>
         {/* ── Secondary tab nav + content ──────────────────────────────── */}
@@ -74,7 +76,7 @@ export default function App() {
                 />
                 <Route
                   path='daily-timesheets'
-                  element={<DailyTimesheetPage />}
+                  element={<DailyTimesheetPage projectId={projectId} />}
                 />
                 <Route path='reports' element={<ReportsPage />} />
                 <Route path='orb-dev' element={<TransferOrbDevPage />} />

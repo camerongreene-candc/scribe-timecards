@@ -14,23 +14,32 @@ import styles from './ExtractModal.module.css';
 type Step = 'upload' | 'processing';
 
 interface ExtractModalProps {
+  projectId: string;
   onComplete: (data: ProcessApiResponse) => void;
 }
 
-export function ExtractModal({ onComplete }: ExtractModalProps) {
+export function ExtractModal({ projectId, onComplete }: ExtractModalProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [step, setStep] = useState<Step>('upload');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [uploadKey, setUploadKey] = useState(0);
   const apiResultRef = useRef<ProcessApiResponse | null>(null);
   const animDoneRef = useRef(false);
 
+  function close() {
+    setIsOpen(false);
+    setStep('upload');
+    setSelectedFile(null);
+    apiResultRef.current = null;
+    animDoneRef.current = false;
+  }
+
   function handleOpenChange(open: boolean) {
-    setIsOpen(open);
-    if (!open) {
-      setStep('upload');
-      setSelectedFile(null);
-      apiResultRef.current = null;
-      animDoneRef.current = false;
+    if (open) {
+      setIsOpen(true);
+      setUploadKey((k) => k + 1);
+    } else {
+      close();
     }
   }
 
@@ -42,12 +51,12 @@ export function ExtractModal({ onComplete }: ExtractModalProps) {
     try {
       const body = new FormData();
       body.append('file', selectedFile);
-      const res = await fetch('/api/process', { method: 'POST', body });
+      const res = await fetch(`/api/process?project=${projectId}`, { method: 'POST', body });
       const json: ApiResponse<ProcessApiResponse> = await res.json();
       apiResultRef.current = json.data;
       if (animDoneRef.current) {
         const data = json.data;
-        setIsOpen(false);
+        close();
         setTimeout(() => onComplete(data), 0);
       }
     } catch {
@@ -59,7 +68,7 @@ export function ExtractModal({ onComplete }: ExtractModalProps) {
     animDoneRef.current = true;
     if (apiResultRef.current) {
       const data = apiResultRef.current;
-      setIsOpen(false);
+      close();
       setTimeout(() => onComplete(data), 0);
     }
   }
@@ -77,7 +86,7 @@ export function ExtractModal({ onComplete }: ExtractModalProps) {
       </ModalTrigger>
       <ModalContent>
         {step === 'upload' ? (
-          <UploadPromptStep onFileChange={setSelectedFile} />
+          <UploadPromptStep key={uploadKey} onFileChange={setSelectedFile} />
         ) : (
           <ProcessingStep
             filename={selectedFile?.name ?? ''}

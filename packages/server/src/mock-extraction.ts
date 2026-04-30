@@ -1,4 +1,8 @@
 import type { ExtractionResult, RosterResult } from '@scribe-timecards/shared'
+import { staticBloomRoster } from './mocks/static-bloom/roster.js'
+import { staticBloomHappy } from './mocks/static-bloom/happy.js'
+import { sunsetRidgeRoster } from './mocks/sunset-ridge/roster.js'
+import { sunsetRidgeLowConfidence } from './mocks/sunset-ridge/low-confidence.js'
 
 // JSON Schema passed to output_config.format.schema in the real API call.
 // Kept here so the real implementation can import and reuse it.
@@ -134,130 +138,21 @@ export const timecardExtractionSchema = {
   additionalProperties: false,
 } as const
 
-// ---------------------------------------------------------------------------
-// Mock — stands in for the real claude.messages.create() call below.
-// When an API key is available, replace mockClaudeExtract with:
-//
-//   const client = new Anthropic()
-//   const response = await client.messages.create({
-//     model: 'claude-opus-4-7',
-//     max_tokens: 1024,
-//     messages: [{ role: 'user', content: `Extract timecard data from this production report:\n${pdfText}` }],
-//     output_config: { format: { type: 'json_schema', schema: timecardExtractionSchema } },
-//   })
-//   const extracted: ExtractedTimecardData = JSON.parse(
-//     response.content.find(b => b.type === 'text')!.text
-//   )
-// ---------------------------------------------------------------------------
-
-export function mockRoster(): RosterResult {
-  return {
-    employees: [
-      { firstName: 'Joanna',  lastName: 'Saczek',    department: 'COVID', union: 'CCO', occupation: 'CCO', dealMemo: '0124:COVID COORD:CCO' },
-      { firstName: 'Allan',   lastName: 'Gaitirira', department: 'COVID', union: 'CCC', occupation: 'CCC', dealMemo: '0125:COVID COMPLIANCE:CCC' },
-      { firstName: 'Kristin', lastName: 'Peavler',   department: 'COVID', union: 'CTC', occupation: 'CTC', dealMemo: '0126:COVID TESTER:CTC' },
-    ],
-  }
+const ROSTERS: Record<string, RosterResult> = {
+  'static-bloom': staticBloomRoster,
+  'sunset-ridge': sunsetRidgeRoster,
 }
 
-export async function mockClaudeExtract(): Promise<ExtractionResult> {
-  await new Promise((resolve) => setTimeout(resolve, 1400))
+const EXTRACTIONS: Record<string, ExtractionResult> = {
+  'static-bloom': staticBloomHappy,
+  'sunset-ridge': sunsetRidgeLowConfidence,
+}
 
-  return {
-    production: {
-      title:                 { value: 'Waco - The Aftermath',                    confident: true },
-      code:                  { value: null,                                       confident: true },
-      productionCompany:     { value: 'King Streep Productions/Crane Town Media', confident: true },
-      productionCompanyCode: { value: null,                                       confident: true },
-    },
-    timecards: [
-      {
-        // Joanna Saczek — all fields clearly legible
-        employee: {
-          fullName:       { value: 'Joanna Saczek', confident: true },
-          middleInitial:  { value: null,             confident: true },
-          role:           { value: 'CCO',            confident: true },
-          department:     { value: 'COVID',          confident: true },
-          dealMemoCode:   { value: '',               confident: false },
-          unionCode:      { value: '',               confident: false },
-          occupationCode: { value: 'CCO',            confident: true },
-        },
-        workDate:    { value: '2022-03-28', confident: true },
-        dayType:     { value: 'Worked',     confident: true },
-        callTime:    { value: 8.0,          confident: true },
-        meal1Out:    { value: 14.0,         confident: true },
-        meal1In:     { value: 14.5,         confident: true },
-        meal2Out:    { value: null,         confident: true },
-        meal2In:     { value: null,         confident: true },
-        meal3Out:    { value: null,         confident: true },
-        meal3In:     { value: null,         confident: true },
-        wrapTime:    { value: 20.5,         confident: true },
-        dailyRate:   { value: 0,            confident: false },
-        workZone:    { value: { country: 'US', state: '', city: '' }, confident: false },
-        accountCode: { value: '',           confident: false },
-        series:      { value: null,         confident: true },
-        episode:     { value: null,         confident: true },
-        set:         { value: null,         confident: true },
-        location:    { value: null,         confident: true },
-      },
-      {
-        // Allan Gaitirira — .3/.8 decimal notation ambiguous (18 or 30 min?)
-        employee: {
-          fullName:       { value: 'Allan Gaitirira', confident: true },
-          middleInitial:  { value: null,               confident: true },
-          role:           { value: 'CCC',              confident: true },
-          department:     { value: 'COVID',            confident: true },
-          dealMemoCode:   { value: '',                 confident: false },
-          unionCode:      { value: '',                 confident: false },
-          occupationCode: { value: 'CCC',              confident: true },
-        },
-        workDate:    { value: '2022-03-28', confident: true },
-        dayType:     { value: 'Worked',     confident: true },
-        callTime:    { value: 6.3,          confident: false },
-        meal1Out:    { value: 12.3,         confident: false },
-        meal1In:     { value: 12.8,         confident: false },
-        meal2Out:    { value: null,         confident: true },
-        meal2In:     { value: null,         confident: true },
-        meal3Out:    { value: null,         confident: true },
-        meal3In:     { value: null,         confident: true },
-        wrapTime:    { value: 21.0,         confident: true },
-        dailyRate:   { value: 0,            confident: false },
-        workZone:    { value: { country: 'US', state: '', city: '' }, confident: false },
-        accountCode: { value: '',           confident: false },
-        series:      { value: null,         confident: true },
-        episode:     { value: null,         confident: true },
-        set:         { value: null,         confident: true },
-        location:    { value: null,         confident: true },
-      },
-      {
-        // Kristin Peavler — wrap written as "20B"/"205", ambiguous
-        employee: {
-          fullName:       { value: 'Kristin Peavler', confident: true },
-          middleInitial:  { value: null,               confident: true },
-          role:           { value: 'CTC',              confident: true },
-          department:     { value: 'COVID',            confident: true },
-          dealMemoCode:   { value: '',                 confident: false },
-          unionCode:      { value: '',                 confident: false },
-          occupationCode: { value: 'CTC',              confident: true },
-        },
-        workDate:    { value: '2022-03-28', confident: true },
-        dayType:     { value: 'Worked',     confident: true },
-        callTime:    { value: 8.0,          confident: true },
-        meal1Out:    { value: 14.0,         confident: true },
-        meal1In:     { value: 14.5,         confident: true },
-        meal2Out:    { value: null,         confident: true },
-        meal2In:     { value: null,         confident: true },
-        meal3Out:    { value: null,         confident: true },
-        meal3In:     { value: null,         confident: true },
-        wrapTime:    { value: 20.5,         confident: false },
-        dailyRate:   { value: 0,            confident: false },
-        workZone:    { value: { country: 'US', state: '', city: '' }, confident: false },
-        accountCode: { value: '',           confident: false },
-        series:      { value: null,         confident: true },
-        episode:     { value: null,         confident: true },
-        set:         { value: null,         confident: true },
-        location:    { value: null,         confident: true },
-      },
-    ],
-  }
+export function mockRoster(project: string): RosterResult {
+  return ROSTERS[project] ?? staticBloomRoster
+}
+
+export async function mockClaudeExtract(project: string): Promise<ExtractionResult> {
+  await new Promise((resolve) => setTimeout(resolve, 1400))
+  return EXTRACTIONS[project] ?? staticBloomHappy
 }

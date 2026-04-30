@@ -15,14 +15,16 @@ app.get('/api/health', (_req, res) => {
   res.json(body)
 })
 
-app.get('/api/extract', (_req, res) => {
-  const body: ApiResponse<RosterResult> = { data: mockRoster() }
+app.get('/api/extract', (req, res) => {
+  const project = String(req.query.project ?? 'static-bloom')
+  const body: ApiResponse<RosterResult> = { data: mockRoster(project) }
   res.json(body)
 })
 
-app.post('/api/process', async (_req, res) => {
+app.post('/api/process', async (req, res) => {
   try {
-    const extraction = await mockClaudeExtract()
+    const project = String(req.query.project ?? 'static-bloom')
+    const extraction = await mockClaudeExtract(project)
 
     const results = extraction.timecards.map((t) => ({
       employeeName: t.employee.fullName.value,

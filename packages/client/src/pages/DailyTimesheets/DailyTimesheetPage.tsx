@@ -17,7 +17,7 @@ interface ReviewItem {
 
 const reviewKey = (rowId: string, field: string) => `${rowId}::${field}`;
 
-export default function DailyTimesheetPage() {
+export default function DailyTimesheetPage({ projectId }: { projectId: string }) {
   const showSnackbar = useSnackbar();
   const [rows, setRows] = useState<EmployeeRow[]>([]);
   const [extraCols, setExtraCols] = useState<Set<string>>(new Set());
@@ -35,12 +35,18 @@ export default function DailyTimesheetPage() {
   const lastNavTrigger = useRef<string>('init');
 
   useEffect(() => {
-    fetch('/api/extract')
+    setRows([]);
+    setExtraCols(new Set());
+    setReviewItems([]);
+    setReviewIndex(0);
+    setAcceptedKeys(new Set());
+    setShowReviewBar(false);
+    fetch(`/api/extract?project=${projectId}`)
       .then((res) => res.json())
       .then(({ data }: { data: RosterResult }) => {
         setRows(data.employees.map(rosterToRow));
       });
-  }, []);
+  }, [projectId]);
 
   const handleExtractComplete = useCallback((data: ProcessApiResponse) => {
     const mergedRows = applyExtractToRows(rowsRef.current, data);
@@ -132,6 +138,13 @@ export default function DailyTimesheetPage() {
   const handleClose = useCallback(() => {
     setShowReviewBar(false);
   }, []);
+
+  const handleSave = useCallback(() => {
+    showSnackbar(
+      { alertTitleText: 'All changes saved!', alertMessage: 'Your timecard data has been saved.' },
+      { tone: 'success', isDismissible: true, autoHideDuration: 3000 },
+    );
+  }, [showSnackbar]);
 
   const handleCellAccept = useCallback(
     (rowId: string, field: string) => {
@@ -274,9 +287,11 @@ export default function DailyTimesheetPage() {
       <div className={styles.dts_page}>
         <div className={styles.dts_content}>
           <DailyTimesheetHeader
+            projectId={projectId}
             extraCols={extraCols}
             onExtraColsChange={setExtraCols}
             onExtractComplete={handleExtractComplete}
+            onSave={handleSave}
           />
 
           <div className={styles.dts_tableWrapper}>

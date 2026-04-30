@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { ProjectSelector, CountryTag } from '@castandcrew/platform-ui';
 import styles from './AppHeader.module.css';
 
@@ -26,9 +25,13 @@ const PROJECTS = [
   },
 ];
 
-export default function AppHeader() {
-  const [selectedId, setSelectedId] = useState(PROJECTS[0].id);
-  const selected = PROJECTS.find((p) => p.id === selectedId) ?? PROJECTS[0];
+interface AppHeaderProps {
+  selectedProjectId: string;
+  onProjectSelect: (id: string) => void;
+}
+
+export default function AppHeader({ selectedProjectId, onProjectSelect }: AppHeaderProps) {
+  const selected = PROJECTS.find((p) => p.id === selectedProjectId) ?? PROJECTS[0];
 
   return (
     <header className={styles.appHeader}>
@@ -36,8 +39,8 @@ export default function AppHeader() {
         <ProjectSelector
           variant='breadcrumb'
           projects={PROJECTS}
-          selectedProjectId={selectedId}
-          onProjectSelect={(p) => setSelectedId(p.id)}
+          selectedProjectId={selectedProjectId}
+          onProjectSelect={(p) => onProjectSelect(p.id)}
           ariaLabel='Select project'
           buttonClassName={styles.appHeader__projectSelector}
         />
