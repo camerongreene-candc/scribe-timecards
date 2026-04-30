@@ -7,17 +7,21 @@
 .activeCell :global([class*='spotlight_input']) {
   background-color: #fff3cc;
   border: 1.5px solid #ba7511;
-  transition: 0.15s border-color, 0.15s background-color;
+  transition:
+    0.15s border-color,
+    0.15s background-color;
 }
 
 .acceptedCell :global([class*='spotlight_input']) {
   background-color: #eaf3de;
   border: 1.5px solid #639922;
-  transition: 0.15s border-color, 0.15s background-color;
+  transition:
+    0.15s border-color,
+    0.15s background-color;
 }
 
 .discrepancyWarning :global([class*='spotlight_input']) {
-  border-color: var(--color-border-critical-secondary);
+  border-color: var(--color-border-interactive-critical);
   transition: 0.3s border-color;
 }
 
@@ -27,5 +31,6 @@
 
 .discrepancyTooltip {
   display: flex;
-  align-items: center;
+  flex: 1;
+  border: none !important;
 }

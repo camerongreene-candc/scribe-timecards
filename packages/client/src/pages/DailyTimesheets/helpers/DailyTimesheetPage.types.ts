@@ -2,6 +2,8 @@ export interface EmployeeRow {
   id: string;
   /** true = AI was confident, false = needs human review */
   _confidence?: Partial<Record<string, boolean>>;
+  /** errorMessage string = validation failed for this field */
+  _discrepancy?: Partial<Record<string, string>>;
   // default visible
   firstName: string;
   lastName: string;

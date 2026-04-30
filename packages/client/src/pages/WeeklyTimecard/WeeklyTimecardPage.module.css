@@ -71,54 +71,15 @@
   flex-shrink: 0;
 }
 
-.wtc_drawer__searchInput {
-  flex: 1;
-}
-
 .wtc_drawer__list {
   flex: 1;
   overflow-y: auto;
 }
 
-.wtc_drawer__item {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2xs);
-  padding: var(--space-sm) var(--space-md);
-  border-bottom: var(--border-weight-default) solid var(--color-border-primary);
-  cursor: pointer;
-}
-
-.wtc_drawer__item:hover {
-  background-color: var(--table-row-color-background-hover);
-}
-
-.wtc_drawer__item--active {
-  background-color: var(--color-background-primary);
-  border-left: var(--border-width-medium) solid var(--color-border-brand);
-}
-
 .wtc_drawer__itemName {
-  composes: spotlight_body-base from global;
+  composes: spotlight_label-lg from global;
   color: var(--color-text-primary);
-}
-
-.wtc_drawer__status {
-  composes: spotlight_body-base from global;
-  color: var(--color-text-secondary);
-  text-transform: capitalize;
-}
-
-.wtc_drawer__status--pending_pa_review {
-  color: var(--color-text-warning-primary, var(--color-text-secondary));
-}
-
-.wtc_drawer__status--pending_upm_review {
-  color: var(--color-text-brand-primary);
-}
-
-.wtc_drawer__status--sent_to_cnc {
-  color: var(--color-text-success-primary, var(--color-text-secondary));
+  flex: 1;
 }
 
 /* ── Header ──────────────────────────────────────────────────────────────── */
@@ -285,6 +246,92 @@
   overflow: auto;
 }
 
+/* ── Drawer search input ──────────────────────────────────────────────────── */
+
+.wtc_drawer__searchInput {
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  min-width: 0;
+}
+
+.wtc_drawer__searchInput::placeholder {
+  color: var(--color-text-placeholder);
+}
+
+/* ── Drawer tile group ────────────────────────────────────────────────────── */
+
+.wtc_drawer__tileGroup {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.wtc_drawer__tile {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--border-radius-md);
+  margin: var(--space-2xs) var(--space-sm);
+  width: calc(100% - var(--space-md));
+  box-sizing: border-box;
+}
+
+.wtc_drawer__tileTopRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-xs);
+}
+
+.wtc_drawer__infoIcon {
+  flex-shrink: 0;
+  color: var(--color-text-secondary);
+}
+
+.wtc_drawer__itemSubtitle {
+  composes: spotlight_body-sm from global;
+  color: var(--color-text-secondary);
+  line-height: 1.3;
+}
+
+.wtc_drawer__tileBottomRow {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* ── Drawer footer ────────────────────────────────────────────────────────── */
+
+.wtc_drawer__footer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
+  border-top: var(--border-weight-default) solid var(--color-border-primary);
+  flex-shrink: 0;
+}
+
+.wtc_drawer__footerActions {
+  display: flex;
+  gap: var(--space-xs);
+}
+
+.wtc_drawer__footerBtn {
+  flex: 1;
+}
+
+.wtc_drawer__footerIcons {
+  display: flex;
+  gap: var(--space-xs);
+  justify-content: center;
+}
+
 /* ── Section (Comments / Allowances / Breakdown / History) ────────────────── */
 
 .wtc_section {
@@ -306,6 +353,28 @@
   composes: spotlight_label-lg from global;
   color: var(--color-text-primary);
   flex: 1;
+}
+
+/* ExpandableSection title row */
+.wtc_section__expandableTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  flex: 1;
+}
+
+/* Comment/item count badge */
+.wtc_section__badge {
+  composes: spotlight_label-sm from global;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 var(--space-2xs);
+  border-radius: var(--border-radius-full);
+  background-color: var(--color-background-brand-secondary);
+  color: var(--color-text-on-brand-primary);
 }
 
 /* Amount cell — used in Breakdown GridTable cell renderer */

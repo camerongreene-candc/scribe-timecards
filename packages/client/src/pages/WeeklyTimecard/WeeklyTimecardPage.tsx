@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { GridTable } from '@castandcrew/platform-ui';
-import { MAIN_TABLE_DATA, DAY_ROWS, HOURS_MARGIN } from './helpers/WeeklyTimecardPage.data';
+import type { ApiResponse, RosterResult } from '@scribe-timecards/shared';
+import type { DrawerTimecard } from './helpers/WeeklyTimecardPage.types';
+import { MAIN_TABLE_DATA, DAY_ROWS, HOURS_MARGIN, rosterToDrawerTimecard } from './helpers/WeeklyTimecardPage.data';
 import { MAIN_COLUMNS } from './helpers/WeeklyTimecardPage.columns';
 import WeeklyTimecardDrawer from './components/WeeklyTimecardDrawer';
 import WeeklyTimecardHeader from './components/WeeklyTimecardHeader';
@@ -9,6 +11,15 @@ import styles from './WeeklyTimecardPage.module.css';
 
 export default function WeeklyTimecardPage() {
   const [drawerOpen, setDrawerOpen] = useState(true);
+  const [timecards, setTimecards] = useState<DrawerTimecard[]>([]);
+
+  useEffect(() => {
+    fetch('/api/extract')
+      .then((res) => res.json())
+      .then(({ data }: ApiResponse<RosterResult>) => {
+        setTimecards(data.employees.map(rosterToDrawerTimecard));
+      });
+  }, []);
 
   const totalHours = DAY_ROWS
     .reduce((sum, r) => sum + (parseFloat(r.hours) || 0), 0)
@@ -16,7 +27,7 @@ export default function WeeklyTimecardPage() {
 
   return (
     <div className={styles.wtc_page}>
-      <WeeklyTimecardDrawer isOpen={drawerOpen} onToggle={setDrawerOpen} />
+      <WeeklyTimecardDrawer isOpen={drawerOpen} onToggle={setDrawerOpen} timecards={timecards} />
 
       <div className={styles.wtc_content}>
         <WeeklyTimecardHeader />

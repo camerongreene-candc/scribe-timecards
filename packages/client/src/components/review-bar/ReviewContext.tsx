@@ -34,6 +34,7 @@ export class ReviewStore {
 export interface ReviewContextValue {
   store: ReviewStore;
   getRowConfidence: (rowId: string, field: string) => boolean;
+  getRowDiscrepancy: (rowId: string, field: string) => string | undefined;
   onCellChange: (rowId: string, field: string, value: string) => void;
   onCellAccept: (rowId: string, field: string) => void;
   onCellReject: (rowId: string, field: string) => void;
@@ -44,6 +45,7 @@ const defaultStore = new ReviewStore();
 export const ReviewContext = createContext<ReviewContextValue>({
   store: defaultStore,
   getRowConfidence: () => false,
+  getRowDiscrepancy: () => undefined,
   onCellChange: () => {},
   onCellAccept: () => {},
   onCellReject: () => {},

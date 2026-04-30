@@ -19,9 +19,10 @@ interface DTSCellProps {
 }
 
 function DTSCell({ rowId, fieldKey, label, value }: DTSCellProps) {
-  const { store, getRowConfidence, onCellChange, onCellAccept } = useReviewContext();
+  const { store, getRowConfidence, getRowDiscrepancy, onCellChange, onCellAccept } = useReviewContext();
 
   const hasConfidence = getRowConfidence(rowId, fieldKey);
+  const discrepancyMessage = getRowDiscrepancy(rowId, fieldKey);
 
   const cellKey = `${rowId}::${fieldKey}`;
   const snapshotCache = useRef({
@@ -65,12 +66,10 @@ function DTSCell({ rowId, fieldKey, label, value }: DTSCellProps) {
   const [locallyModified, setLocallyModified] = useState(false);
 
   // Sync draft when the prop changes externally (e.g. extraction fills data).
-  const prevValueRef = useRef(value);
-  if (prevValueRef.current !== value) {
-    prevValueRef.current = value;
+  useEffect(() => {
     setDraft(value);
     setLocallyModified(false);
-  }
+  }, [value]);
 
   const cellRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -78,7 +77,7 @@ function DTSCell({ rowId, fieldKey, label, value }: DTSCellProps) {
   useEffect(() => {
     console.log(`[text-focus] ${rowId}::${fieldKey} isActive=${isActive} inputRef=${inputRef.current ? 'attached' : 'null'}`);
     if (!isActive) return;
-    cellRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+    cellRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
     const t = setTimeout(() => {
       console.log(`[text-focus] setTimeout fired for ${rowId}::${fieldKey} — inputRef=${inputRef.current ? 'attached' : 'null'} activeElement=${document.activeElement?.tagName}`);
       inputRef.current?.focus();
@@ -100,17 +99,19 @@ function DTSCell({ rowId, fieldKey, label, value }: DTSCellProps) {
         needsReview={hasReviewItems && hasConfidence && !isActive && !(modified || locallyModified)}
         isActive={isActive}
         isAccepted={accepted}
+        isDiscrepancy={!!discrepancyMessage}
+        discrepancyMessage={discrepancyMessage}
         className={styles.dts_cellInput}
         size='sm'
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
           setDraft(e.target.value);
           setLocallyModified(true);
         }}
-        onBlur={() => {
+        onBlur={(e) => {
           commit();
           if (!isActive || !(accepted || locallyModified)) return;
           const reviewBar = document.querySelector('[aria-label="AI confidence review"]');
-          if (reviewBar?.contains(document.activeElement)) return;
+          if (reviewBar?.contains(e.relatedTarget as Node)) return;
           onCellAccept(rowId, fieldKey);
         }}
         inputProps={{
@@ -206,11 +207,13 @@ function DTSSelectCell({ rowId, fieldKey, label, options, value }: DTSSelectCell
 
   const cellRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const isDropdownOpen = useRef(false);
+  const enterOnOpen = useRef(false);
 
   useEffect(() => {
     console.log(`[select-focus] ${rowId}::${fieldKey} isActive=${isActive} inputRef=${inputRef.current ? 'attached' : 'null'}`);
     if (!isActive) return;
-    cellRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+    cellRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
     const t = setTimeout(() => {
       console.log(`[select-focus] setTimeout fired for ${rowId}::${fieldKey} — inputRef=${inputRef.current ? 'attached' : 'null'} activeElement=${document.activeElement?.tagName}`);
       inputRef.current?.focus();
@@ -226,8 +229,25 @@ function DTSSelectCell({ rowId, fieldKey, label, options, value }: DTSSelectCell
         options={options}
         selectedKey={value || null}
         onSelectionChange={(key) => {
+          enterOnOpen.current = false;
           onCellChange(rowId, fieldKey, String(key ?? ''));
           onCellAccept(rowId, fieldKey);
+        }}
+        onOpenChange={(open) => {
+          isDropdownOpen.current = open;
+          if (!open && enterOnOpen.current) {
+            enterOnOpen.current = false;
+            onCellAccept(rowId, fieldKey);
+          }
+        }}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            if (!isDropdownOpen.current) {
+              onCellAccept(rowId, fieldKey);
+            } else {
+              enterOnOpen.current = true;
+            }
+          }
         }}
         className={styles.dts_cellSelect}
         popoverClassName={styles.dts_cellSelectPopover}
