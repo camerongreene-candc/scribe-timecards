@@ -88,7 +88,7 @@ const DecimalTimeSchema = z
     (v) => Math.round((v % 1) * 60) <= 59,
     { message: 'Minutes must be 00–59' },
   )
-  .nullable()
+  .nullish()
 
 const TimeStringSchema = z
   .string()
@@ -281,34 +281,38 @@ export const DTSDaySchema = z
     (d) => d.LastMan1In == null || d.meal1In != null,
     { message: 'Last Man In requires Meal 1 In to be present', path: ['meal1In'] },
   )
-  .refine(
-    (d) => {
-      const values: Record<string, number | null | undefined> = {
-        callTime: d.callTime,
-        ndbOut: d.ndbOut,
-        ndbIn: d.ndbIn,
-        meal1Out: d.meal1Out,
-        meal1In: d.meal1In,
-        LastMan1In: d.LastMan1In,
-        ndmOut: d.ndmOut,
-        ndmIn: d.ndmIn,
-        meal2Out: d.meal2Out,
-        meal2In: d.meal2In,
-        meal3Out: d.meal3Out,
-        meal3In: d.meal3In,
-        wrapTime: d.wrapTime,
+  .superRefine((d, ctx) => {
+    const values: Record<string, number | null | undefined> = {
+      callTime: d.callTime,
+      ndbOut: d.ndbOut,
+      ndbIn: d.ndbIn,
+      meal1Out: d.meal1Out,
+      meal1In: d.meal1In,
+      LastMan1In: d.LastMan1In,
+      ndmOut: d.ndmOut,
+      ndmIn: d.ndmIn,
+      meal2Out: d.meal2Out,
+      meal2In: d.meal2In,
+      meal3Out: d.meal3Out,
+      meal3In: d.meal3In,
+      wrapTime: d.wrapTime,
+    }
+    let prev: number | null = null
+    let prevField: string | null = null
+    for (const field of DTS_TIME_FIELD_ORDER) {
+      const v = values[field]
+      if (v == null) continue
+      if (prev !== null && v <= prev) {
+        ctx.addIssue({
+          code: 'custom',
+          message: `Must be after ${prevField}`,
+          path: [field],
+        })
       }
-      let prev: number | null = null
-      for (const field of DTS_TIME_FIELD_ORDER) {
-        const v = values[field]
-        if (v == null) continue
-        if (prev !== null && v <= prev) return false
-        prev = v
-      }
-      return true
-    },
-    { message: 'Time fields must be in chronological order' },
-  )
+      prev = v
+      prevField = field
+    }
+  })
   .refine(
     (d) => {
       const code = d.dayType?.code
@@ -360,6 +364,27 @@ export const DTSDaySchema = z
 export type DTSDay = z.infer<typeof DTSDaySchema>
 
 export type ProcessResponse = { employeeName: string; day: Partial<DTSDay> }
+
+export type FieldConfidenceMap = { employeeName: string; flaggedFields: string[] }
+
+export type ValidationFlaggedField = { fieldName: string; errorMessage: string }
+
+export type FieldValidationMap = { employeeName: string; flaggedFields: ValidationFlaggedField[] }
+
+export type ProcessApiResponse = {
+  results: ProcessResponse[]
+  confidence: FieldConfidenceMap[]
+  validation: FieldValidationMap[]
+}
+
+export function getValidationFlaggedFields(day: Partial<DTSDay>): ValidationFlaggedField[] {
+  const result = DTSDaySchema.safeParse(day)
+  if (result.success) return []
+  return result.error.issues.map((issue) => ({
+    fieldName: issue.path.length > 0 ? String(issue.path[0]) : '_form',
+    errorMessage: issue.message,
+  }))
+}
 
 // ─── Transform: extracted day → DTS day ──────────────────────────────────────
 

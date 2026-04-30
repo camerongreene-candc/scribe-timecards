@@ -1,4 +1,4 @@
-import type { ExtractedTimecardData } from '@scribe-timecards/shared'
+import type { ExtractionResult } from '@scribe-timecards/shared'
 
 // JSON Schema passed to output_config.format.schema in the real API call.
 // Kept here so the real implementation can import and reuse it.
@@ -150,102 +150,104 @@ export const timecardExtractionSchema = {
 //   )
 // ---------------------------------------------------------------------------
 
-export async function mockClaudeExtract(): Promise<ExtractedTimecardData> {
+export async function mockClaudeExtract(): Promise<ExtractionResult> {
   await new Promise((resolve) => setTimeout(resolve, 1400))
 
   return {
-    employee: {
-      fullName: 'Eloisa Axrgifsemnc',
-      middleInitial: null,
-      role: 'Accountant',
-      department: 'Accounting',
-      dealMemoCode: 'IATSE-729-ACCT',
-      unionCode: 'IATSE-729',
-      occupationCode: 'ACCT',
+    production: {
+      title:                 { value: 'Waco - The Aftermath',                    confident: true },
+      code:                  { value: null,                                       confident: true },
+      productionCompany:     { value: 'King Streep Productions/Crane Town Media', confident: true },
+      productionCompanyCode: { value: null,                                       confident: true },
     },
-    project: {
-      title: 'Project Nightfall (S2)',
-      code: 'NIGHTFALL-S2',
-      productionCompany: 'Lantern Pictures',
-      productionCompanyCode: 'LPC',
-    },
-    workDate: '2026-04-22',
-    dayType: 'Worked',
-    callTime: '07:00',
-    meal1Out: '13:00',
-    meal1In: '13:30',
-    meal2Out: '18:00',
-    meal2In: '18:30',
-    wrapTime: '21:30',
-    regularHours: 8,
-    overtimeHours: 6,
-    dailyRate: 48.5,
-    mealPenalty: false,
-    workZone: {
-      country: 'US',
-      state: 'CA',
-      city: 'Los Angeles',
-    },
-    accountCode: '5210-001',
-    series: 'NIGHTFALL',
-    episode: 'S2E03',
-    set: 'Stage 14',
-    location: 'Studio',
-    notes: 'Late wrap due to lighting reset on Stage 14.',
-    confidence: 'high',
-
-    meal1Override: null,
-    meal2Override: null,
-    meal3Out: null,
-    meal3In: null,
-    meal3Override: null,
-
-    startTravel: null,
-    startTravelTo: null,
-    travelFrom: null,
-    travelTo: null,
-    travelHome: null,
-
-    mkupWrdIn: 6.75,
-    mkupWrdOut: 21.5,
-    mkupWrdRem: null,
-
-    onSet: 7.0,
-    hotelSet: null,
-    setHotel: null,
-
-    mpOverride: null,
-    otOverride: null,
-    stuntAdj: null,
-    onCallStandBy: null,
-    frenchThreshold: null,
-
-    ndb: false,
-    ndbIn: null,
-    ndbOut: null,
-    ndm: false,
-    ndmIn: null,
-    ndmOut: null,
-
-    grace1: false,
-    grace2: false,
-    wrapProvision: false,
-    french: false,
-    rerate: false,
-
-    onProduction: true,
-    payHold: false,
-    noPhoto: false,
-    wbMp: false,
-    hboex15: false,
-    hboex20: false,
-    combineCheckCode: false,
-    noCellAllow: false,
-    reducedWeRest: false,
-    loadOut: false,
-
-    dgaMva: false,
-    dgaCoa: false,
-    dgaProdFeePrep: false,
+    timecards: [
+      {
+        // Joanna Saczek — all fields clearly legible
+        employee: {
+          fullName:       { value: 'Joanna Saczek', confident: true },
+          middleInitial:  { value: null,             confident: true },
+          role:           { value: 'CCO',            confident: true },
+          department:     { value: 'COVID',          confident: true },
+          dealMemoCode:   { value: '',               confident: false },
+          unionCode:      { value: '',               confident: false },
+          occupationCode: { value: 'CCO',            confident: true },
+        },
+        workDate:    { value: '2022-03-28', confident: true },
+        dayType:     { value: 'Worked',     confident: true },
+        callTime:    { value: 8.0,          confident: true },
+        meal1Out:    { value: 14.0,         confident: true },
+        meal1In:     { value: 14.5,         confident: true },
+        meal2Out:    { value: null,         confident: true },
+        meal2In:     { value: null,         confident: true },
+        meal3Out:    { value: null,         confident: true },
+        meal3In:     { value: null,         confident: true },
+        wrapTime:    { value: 20.5,         confident: true },
+        dailyRate:   { value: 0,            confident: false },
+        workZone:    { value: { country: 'US', state: '', city: '' }, confident: false },
+        accountCode: { value: '',           confident: false },
+        series:      { value: null,         confident: true },
+        episode:     { value: null,         confident: true },
+        set:         { value: null,         confident: true },
+        location:    { value: null,         confident: true },
+      },
+      {
+        // Allan Gaitirira — .3/.8 decimal notation ambiguous (18 or 30 min?)
+        employee: {
+          fullName:       { value: 'Allan Gaitirira', confident: true },
+          middleInitial:  { value: null,               confident: true },
+          role:           { value: 'CCC',              confident: true },
+          department:     { value: 'COVID',            confident: true },
+          dealMemoCode:   { value: '',                 confident: false },
+          unionCode:      { value: '',                 confident: false },
+          occupationCode: { value: 'CCC',              confident: true },
+        },
+        workDate:    { value: '2022-03-28', confident: true },
+        dayType:     { value: 'Worked',     confident: true },
+        callTime:    { value: 6.3,          confident: false },
+        meal1Out:    { value: 12.3,         confident: false },
+        meal1In:     { value: 12.8,         confident: false },
+        meal2Out:    { value: null,         confident: true },
+        meal2In:     { value: null,         confident: true },
+        meal3Out:    { value: null,         confident: true },
+        meal3In:     { value: null,         confident: true },
+        wrapTime:    { value: 21.0,         confident: true },
+        dailyRate:   { value: 0,            confident: false },
+        workZone:    { value: { country: 'US', state: '', city: '' }, confident: false },
+        accountCode: { value: '',           confident: false },
+        series:      { value: null,         confident: true },
+        episode:     { value: null,         confident: true },
+        set:         { value: null,         confident: true },
+        location:    { value: null,         confident: true },
+      },
+      {
+        // Kristin Peavler — wrap written as "20B"/"205", ambiguous
+        employee: {
+          fullName:       { value: 'Kristin Peavler', confident: true },
+          middleInitial:  { value: null,               confident: true },
+          role:           { value: 'CTC',              confident: true },
+          department:     { value: 'COVID',            confident: true },
+          dealMemoCode:   { value: '',                 confident: false },
+          unionCode:      { value: '',                 confident: false },
+          occupationCode: { value: 'CTC',              confident: true },
+        },
+        workDate:    { value: '2022-03-28', confident: true },
+        dayType:     { value: 'Worked',     confident: true },
+        callTime:    { value: 8.0,          confident: true },
+        meal1Out:    { value: 14.0,         confident: true },
+        meal1In:     { value: 14.5,         confident: true },
+        meal2Out:    { value: null,         confident: true },
+        meal2In:     { value: null,         confident: true },
+        meal3Out:    { value: null,         confident: true },
+        meal3In:     { value: null,         confident: true },
+        wrapTime:    { value: 20.5,         confident: false },
+        dailyRate:   { value: 0,            confident: false },
+        workZone:    { value: { country: 'US', state: '', city: '' }, confident: false },
+        accountCode: { value: '',           confident: false },
+        series:      { value: null,         confident: true },
+        episode:     { value: null,         confident: true },
+        set:         { value: null,         confident: true },
+        location:    { value: null,         confident: true },
+      },
+    ],
   }
 }

@@ -1,8 +1,7 @@
-export type Confidence = 'high' | 'medium' | 'low';
-
 export interface EmployeeRow {
   id: string;
-  _confidence?: Partial<Record<string, Confidence>>;
+  /** true = AI was confident, false = needs human review */
+  _confidence?: Partial<Record<string, boolean>>;
   // default visible
   firstName: string;
   lastName: string;

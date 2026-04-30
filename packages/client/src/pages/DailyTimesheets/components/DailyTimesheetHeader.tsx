@@ -40,6 +40,7 @@ export default function DailyTimesheetHeader({ extraCols, onExtraColsChange, onE
         </div>
 
         <div className={styles.dts_header__secondary}>
+          <ExtractModal onComplete={onExtractComplete} />
           <AdditionalFieldsSelect selectedCols={extraCols} onChange={onExtraColsChange} />
         </div>
 
