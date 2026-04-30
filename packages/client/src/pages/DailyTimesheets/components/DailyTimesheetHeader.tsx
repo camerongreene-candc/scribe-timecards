@@ -1,13 +1,16 @@
 import { Button, Icon, IconButton, TextField } from '@castandcrew/platform-ui';
+import type { ProcessResponse } from '@scribe-timecards/shared';
+import { ExtractModal } from '../../../components/extract-modal/ExtractModal';
 import AdditionalFieldsSelect from './AdditionalFieldsSelect';
 import styles from '../DailyTimesheetPage.module.css';
 
 interface DailyTimesheetHeaderProps {
   extraCols: Set<string>;
   onExtraColsChange: (cols: Set<string>) => void;
+  onExtractComplete: (data: ProcessResponse) => void;
 }
 
-export default function DailyTimesheetHeader({ extraCols, onExtraColsChange }: DailyTimesheetHeaderProps) {
+export default function DailyTimesheetHeader({ extraCols, onExtraColsChange, onExtractComplete }: DailyTimesheetHeaderProps) {
   return (
     <header className={styles.dts_header}>
       <div className={styles.dts_header__row}>
@@ -36,6 +39,7 @@ export default function DailyTimesheetHeader({ extraCols, onExtraColsChange }: D
         </div>
 
         <div className={styles.dts_header__secondary}>
+          <ExtractModal onComplete={onExtractComplete} />
           <AdditionalFieldsSelect selectedCols={extraCols} onChange={onExtraColsChange} />
         </div>
 

@@ -109,8 +109,7 @@
 /* ── Table wrapper ────────────────────────────────────────────────────────── */
 
 .dts_tableWrapper {
-  overflow-x: scroll;
-  margin: var(--space-md);
+  overflow: hidden;
   border-radius: var(--border-radius-md);
   border: 1px solid var(--color-border-primary);
 }
