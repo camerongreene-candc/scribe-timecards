@@ -36,6 +36,7 @@ export default function DailyTimesheetHeader({ extraCols, onExtraColsChange, onE
           <Button buttonVariant='solid'>Save</Button>
           <Button buttonVariant='outlined'>List Timecards</Button>
           <Button buttonVariant='ghost'>Clear All Changes</Button>
+          <ExtractModal onComplete={onExtractComplete} />
         </div>
 
         <div className={styles.dts_header__secondary}>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   Button,
   ModalProvider,
@@ -9,6 +9,7 @@ import {
 import type { ApiResponse, ProcessApiResponse } from '@scribe-timecards/shared';
 import { UploadPromptStep } from './UploadPromptStep';
 import { ProcessingStep } from './ProcessingStep';
+import styles from './ExtractModal.module.css';
 
 type Step = 'upload' | 'processing';
 
@@ -20,26 +21,44 @@ export function ExtractModal({ onComplete }: ExtractModalProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [step, setStep] = useState<Step>('upload');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const apiResultRef = useRef<ProcessResponse | null>(null);
+  const animDoneRef = useRef(false);
 
   function handleOpenChange(open: boolean) {
     setIsOpen(open);
     if (!open) {
       setStep('upload');
       setSelectedFile(null);
+      apiResultRef.current = null;
+      animDoneRef.current = false;
     }
   }
 
   async function handleProcess() {
     if (!selectedFile) return;
+    apiResultRef.current = null;
+    animDoneRef.current = false;
     setStep('processing');
     try {
       const body = new FormData();
       body.append('file', selectedFile);
       const res = await fetch('/api/process', { method: 'POST', body });
       const json: ApiResponse<ProcessApiResponse> = await res.json();
-      onComplete(json.data);
+      apiResultRef.current = json.data;
+      if (animDoneRef.current) {
+        onComplete(json.data);
+        setIsOpen(false);
+      }
     } catch {
       setStep('upload');
+    }
+  }
+
+  function handleAnimationComplete() {
+    animDoneRef.current = true;
+    if (apiResultRef.current) {
+      onComplete(apiResultRef.current);
+      setIsOpen(false);
     }
   }
 
@@ -48,28 +67,30 @@ export function ExtractModal({ onComplete }: ExtractModalProps) {
       title='Extract from Report'
       open={isOpen}
       onOpenChange={handleOpenChange}
-      height='24rem'
+      height='28rem'
+      footerClassName={step === 'processing' ? styles.footerHidden : undefined}
     >
       <ModalTrigger>
-        <Button buttonVariant='outlined'>Extract from Report</Button>
+        <Button buttonVariant='outlined'>Extract from DTS</Button>
       </ModalTrigger>
       <ModalContent>
         {step === 'upload' ? (
-          <UploadPromptStep selectedFile={selectedFile} onFileChange={setSelectedFile} />
+          <UploadPromptStep onFileChange={setSelectedFile} />
         ) : (
-          <ProcessingStep />
+          <ProcessingStep
+            filename={selectedFile?.name ?? ''}
+            onComplete={handleAnimationComplete}
+          />
         )}
       </ModalContent>
-      {step === 'upload' && (
-        <ModalFooter>
-          <Button size='sm' slot='close' buttonVariant='outlined'>
-            Cancel
-          </Button>
-          <Button size='sm' isDisabled={!selectedFile} onPress={handleProcess}>
-            Process
-          </Button>
-        </ModalFooter>
-      )}
+      <ModalFooter>
+        <Button size='sm' slot='close' buttonVariant='outlined'>
+          Cancel
+        </Button>
+        <Button size='sm' isDisabled={!selectedFile} onPress={handleProcess}>
+          Process
+        </Button>
+      </ModalFooter>
     </ModalProvider>
   );
 }
