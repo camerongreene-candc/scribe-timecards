@@ -47,8 +47,8 @@ export function makeTF(
       <DTSCell
         initialValue={getValue() as string}
         hasConfidence={
-          row.original._confidence?.[id] != null &&
-          row.original._confidence?.[id] !== 'high'
+          (getValue() as string) !== '' &&
+          row.original._confidence?.[id] === false
         }
         label={label}
       />

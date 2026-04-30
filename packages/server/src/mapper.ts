@@ -42,8 +42,11 @@ const COUNTRY_NAMES: Record<string, string> = {
 // Helpers
 // ---------------------------------------------------------------------------
 
-const toDecimal = (t: string | null | undefined): number | null =>
-  t != null ? timeStringToDecimal(t) : null
+const toDecimal = (t: string | number | null | undefined): number | null => {
+  if (t == null) return null
+  if (typeof t === 'number') return t
+  return timeStringToDecimal(t)
+}
 
 function codedValue(code: string, nameMap: Record<string, string>) {
   return { id: code, code, name: nameMap[code] ?? code }
