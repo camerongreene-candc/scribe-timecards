@@ -29,7 +29,7 @@ const emptyRow = (id: string, firstName: string, lastName: string, department: s
 });
 
 export function rosterToRow(emp: RosterEmployee, i: number): EmployeeRow {
-  return { ...emptyRow(String(i + 1), emp.firstName, emp.lastName, emp.department, emp.union), occupation: emp.occupation };
+  return { ...emptyRow(String(i + 1), emp.firstName, emp.lastName, emp.department, emp.union), occupation: emp.occupation, dealMemo: emp.dealMemo };
 }
 
 export const SAMPLE_ROWS: EmployeeRow[] = [

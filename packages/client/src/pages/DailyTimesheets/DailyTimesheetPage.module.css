@@ -235,6 +235,19 @@
   overflow: visible;
 }
 
+.dts_cellStatic {
+  display: inline-flex;
+  align-items: center;
+  min-width: 80px;
+  padding: 0 var(--space-xs);
+  font-size: var(--font-size-xs);
+  font-family: var(--font-family-base);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .dts_cellInput :global([class*='spotlight_TextField-Group']) {
   min-width: 80px;
 }

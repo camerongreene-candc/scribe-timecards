@@ -126,6 +126,20 @@ function DTSCell({ rowId, fieldKey, label, value }: DTSCellProps) {
   );
 }
 
+export function makeStatic(
+  id: keyof EmployeeRow & string,
+  header: string | (() => React.ReactNode),
+): ColumnDef<EmployeeRow, unknown> {
+  return {
+    id,
+    accessorKey: id,
+    header,
+    cell: ({ getValue }) => (
+      <span className={styles.dts_cellStatic}>{(getValue() ?? '') as string}</span>
+    ),
+  };
+}
+
 export function makeTF(
   id: keyof EmployeeRow & string,
   header: string | (() => React.ReactNode),
@@ -248,10 +262,10 @@ export function makeSelect(
 }
 
 export const DEFAULT_COLUMNS: ColumnDef<EmployeeRow, unknown>[] = [
-    makeTF('firstName',  'First Name'),
-    makeTF('lastName',   'Last Name'),
-    makeTF('department', 'Department'),
-    makeTF('union',      'Union'),
+    makeStatic('firstName',  'First Name'),
+    makeStatic('lastName',   'Last Name'),
+    makeStatic('department', 'Department'),
+    makeStatic('union',      'Union'),
     makeSelect('dayType',  'Day Type',  DAY_TYPE_OPTIONS),
     makeSelect('workZone', 'Work Zone', WORK_ZONE_OPTIONS),
     makeTF('callTime',   () => (<>Call<br />Time</>)),
@@ -262,7 +276,7 @@ export const DEFAULT_COLUMNS: ColumnDef<EmployeeRow, unknown>[] = [
     makeSelect('country', 'Country', COUNTRY_OPTIONS),
     makeTF('state',      'State'),
     makeTF('city',       'City'),
-    makeTF('occupation', 'Occupation'),
+    makeStatic('occupation', 'Occupation'),
     makeTF('account',    'Account'),
     makeTF('epi',        'Epi'),
     makeTF('rate',       'Rate'),
@@ -276,6 +290,7 @@ export function makeDefaultColumns(): ColumnDef<EmployeeRow, unknown>[] {
 export const ADDITIONAL_FIELD_DEFS: {
   id: keyof EmployeeRow & string;
   label: string;
+  readonly?: boolean;
 }[] = [
   { id: 'ndb', label: 'NDB' },
   { id: 'ndbOut', label: 'NDB Out' },
@@ -288,7 +303,7 @@ export const ADDITIONAL_FIELD_DEFS: {
   { id: 'meal3Out', label: 'Meal 3 Out' },
   { id: 'hours', label: 'Hours' },
   { id: 'county', label: 'County' },
-  { id: 'dealMemo', label: 'Deal Memo' },
+  { id: 'dealMemo', label: 'Deal Memo', readonly: true },
   { id: 'onProd', label: 'On Prod' },
   { id: 'hboex15', label: 'HBOEX15' },
   { id: 'hboex20', label: 'HBOEX20' },

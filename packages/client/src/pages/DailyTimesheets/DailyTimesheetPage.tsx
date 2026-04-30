@@ -4,7 +4,7 @@ import type { ProcessApiResponse, RosterResult } from '@scribe-timecards/shared'
 import type { ColumnDef } from '@tanstack/react-table';
 import type { EmployeeRow } from './helpers/DailyTimesheetPage.types';
 import { applyExtractToRows, rosterToRow } from './helpers/DailyTimesheetPage.data';
-import { makeDefaultColumns, ADDITIONAL_FIELD_DEFS, makeTF } from './helpers/DailyTimesheetPage.columns';
+import { makeDefaultColumns, ADDITIONAL_FIELD_DEFS, makeTF, makeStatic } from './helpers/DailyTimesheetPage.columns';
 import DailyTimesheetHeader from './components/DailyTimesheetHeader';
 import { ReviewBar } from '../../components/review-bar/ReviewBar';
 import { ReviewContext, ReviewStore } from '../../components/review-bar/ReviewContext';
@@ -228,7 +228,7 @@ export default function DailyTimesheetPage() {
     () => [
       ...makeDefaultColumns(),
       ...ADDITIONAL_FIELD_DEFS.filter((f) => extraCols.has(f.id)).map((f) =>
-        makeTF(f.id, f.label),
+        f.readonly ? makeStatic(f.id, f.label) : makeTF(f.id, f.label),
       ),
     ],
     [extraCols],

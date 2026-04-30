@@ -153,9 +153,9 @@ export const timecardExtractionSchema = {
 export function mockRoster(): RosterResult {
   return {
     employees: [
-      { firstName: 'Joanna',  lastName: 'Saczek',    department: 'COVID', union: 'CCO', occupation: 'CCO' },
-      { firstName: 'Allan',   lastName: 'Gaitirira', department: 'COVID', union: 'CCC', occupation: 'CCC' },
-      { firstName: 'Kristin', lastName: 'Peavler',   department: 'COVID', union: 'CTC', occupation: 'CTC' },
+      { firstName: 'Joanna',  lastName: 'Saczek',    department: 'COVID', union: 'CCO', occupation: 'CCO', dealMemo: '0124:COVID COORD:CCO' },
+      { firstName: 'Allan',   lastName: 'Gaitirira', department: 'COVID', union: 'CCC', occupation: 'CCC', dealMemo: '0125:COVID COMPLIANCE:CCC' },
+      { firstName: 'Kristin', lastName: 'Peavler',   department: 'COVID', union: 'CTC', occupation: 'CTC', dealMemo: '0126:COVID TESTER:CTC' },
     ],
   }
 }
