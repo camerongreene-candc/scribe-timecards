@@ -12,14 +12,14 @@ import {
   Snackbar,
 } from '@castandcrew/platform-ui';
 import DailyTimesheetPage from './pages/DailyTimesheets';
-import WeeklyTimecardPage from './pages/WeeklyTimecard';
+import ReportsPage from './pages/Reports';
 import TransferOrbDevPage from './pages/TransferOrbDevPage';
 import AppHeader from './components/AppHeader';
 import styles from './App.module.css';
 
 const NAV_LINKS = [
   { id: 'daily-timesheets', label: 'Daily Timesheets' },
-  { id: 'timesheet', label: 'Timesheet' },
+  {id: 'reports', label: 'Reports'},
   { id: 'orb-dev', label: 'Orb Dev' },
 ];
 
@@ -76,7 +76,7 @@ export default function App() {
                   path='daily-timesheets'
                   element={<DailyTimesheetPage />}
                 />
-                <Route path='timesheet' element={<WeeklyTimecardPage />} />
+                <Route path='reports' element={<ReportsPage />} />
                 <Route path='orb-dev' element={<TransferOrbDevPage />} />
               </Routes>
             </SnackbarProvider>
