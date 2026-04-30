@@ -166,7 +166,7 @@ function DTSSelectCell({ rowId, fieldKey, label, options, value }: DTSSelectCell
     isAccepted: false,
     isModified: false,
   });
-  const { hasReviewItems, isActive, isAccepted: accepted } = useSyncExternalStore(
+  const { hasReviewItems, isActive, isAccepted: accepted, isModified: modified } = useSyncExternalStore(
     store.subscribe,
     () => {
       const { hasReviewItems, activeRowId, activeField, acceptedKeys, showReviewBar } = store.volatile;
@@ -218,7 +218,7 @@ function DTSSelectCell({ rowId, fieldKey, label, options, value }: DTSSelectCell
         className={styles.dts_cellSelect}
         popoverClassName={styles.dts_cellSelectPopover}
         inputRef={inputRef}
-        needsReview={hasReviewItems && hasConfidence && !isActive && !accepted}
+        needsReview={hasReviewItems && hasConfidence && !isActive && !modified}
         isActive={isActive}
         isAccepted={accepted}
       />
