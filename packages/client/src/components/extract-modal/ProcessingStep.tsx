@@ -22,6 +22,7 @@ interface ProcessingStepProps {
 
 export function ProcessingStep({ filename, onComplete }: ProcessingStepProps) {
   const [progress, setProgress] = useState(0);
+  const [done, setDone] = useState(false);
   const onCompleteRef = useRef(onComplete);
   useEffect(() => { onCompleteRef.current = onComplete; }, [onComplete]);
 
@@ -39,13 +40,19 @@ export function ProcessingStep({ filename, onComplete }: ProcessingStepProps) {
       if (p < 100) {
         id = requestAnimationFrame(tick);
       } else {
-        onCompleteRef.current();
+        setDone(true);
       }
     }
 
     id = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(id);
   }, []);
+
+  useEffect(() => {
+    if (!done) return;
+    const t = setTimeout(() => onCompleteRef.current(), 2000);
+    return () => clearTimeout(t);
+  }, [done]);
 
   return (
     <div className={styles.processingLayout}>
@@ -67,11 +74,20 @@ export function ProcessingStep({ filename, onComplete }: ProcessingStepProps) {
         <div className={styles.orbPanel} ref={orbPanelRef}>
           <TransferOrb size={300} progress={progress / 100} />
         </div>
+
+        {done && (
+          <div className={styles.doneCheckCenter}>
+            <svg viewBox="0 0 24 24" width="100" height="100" aria-hidden>
+              <circle cx="12" cy="12" r="11" fill="#22c55e" />
+              <path d="M6.5 12l3.5 3.5 7.5-7.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+            </svg>
+          </div>
+        )}
       </div>
 
       <div className={styles.progressSection}>
         <ProgressBar value={progress} showValueLabel={false} aria-label='Processing progress' />
-        <p className={styles.progressSection__phase}>{getPhase(progress)}</p>
+        <p className={styles.progressSection__phase}>{done ? 'Done!' : getPhase(progress)}</p>
       </div>
     </div>
   );

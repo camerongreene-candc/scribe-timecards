@@ -15,7 +15,7 @@ interface Particle {
   b: number
 }
 
-const MAX_PARTICLES = 70
+const MAX_PARTICLES = 170
 const DOT_RADIUS = 3
 const ORB_RADIUS_PX = 150  // TransferOrb is always size=300
 
@@ -45,6 +45,11 @@ function pickColor(): [number, number, number] {
 function cubicBezier(t: number, p0: number, p1: number, p2: number, p3: number): number {
   const u = 1 - t
   return u * u * u * p0 + 3 * u * u * t * p1 + 3 * u * t * t * p2 + t * t * t * p3
+}
+
+function smoothstep(a: number, b: number, x: number): number {
+  const t = Math.max(0, Math.min(1, (x - a) / (b - a)))
+  return t * t * (3 - 2 * t)
 }
 
 export function ParticleStream({ progress, sourceRef, targetRef }: ParticleStreamProps) {
@@ -86,6 +91,7 @@ export function ParticleStream({ progress, sourceRef, targetRef }: ParticleStrea
     let animId: number
     let lastTime: number | null = null
     let spawnAccum = 0
+    let elapsed = 0
 
     function spawn() {
       const [r, g, b] = pickColor()
@@ -101,6 +107,7 @@ export function ParticleStream({ progress, sourceRef, targetRef }: ParticleStrea
       animId = requestAnimationFrame(frame)
       const dt = lastTime !== null ? Math.min((now - lastTime) / 1000, 0.05) : 0
       lastTime = now
+      elapsed += dt
 
       const prog = progressRef.current
 
@@ -109,7 +116,7 @@ export function ParticleStream({ progress, sourceRef, targetRef }: ParticleStrea
         if (particles[i].t >= 1) particles.splice(i, 1)
       }
 
-      const target = MAX_PARTICLES * Math.sin(Math.PI * prog)
+      const target = elapsed >= 0.25 ? MAX_PARTICLES * Math.sin(Math.PI * prog) : 0
       if (particles.length < target) {
         spawnAccum += (target - particles.length) * dt * 8
         while (spawnAccum >= 1 && particles.length < MAX_PARTICLES) {
@@ -126,7 +133,7 @@ export function ParticleStream({ progress, sourceRef, targetRef }: ParticleStrea
         const x = cubicBezier(p.t, startX, startX + span * 0.4, endX - span * 0.4, endX)
         const y = cubicBezier(p.t, startY, startY, p.destY, p.destY)
 
-        const alpha = 0.55 * Math.sin(Math.PI * p.t)
+        const alpha = 0.6 * smoothstep(0, 0.12, p.t) * (1 - smoothstep(0.82, 1.0, p.t))
 
         const grad = ctx.createRadialGradient(x, y, 0, x, y, DOT_RADIUS)
         grad.addColorStop(0, `rgba(${p.r},${p.g},${p.b},${alpha.toFixed(3)})`)
