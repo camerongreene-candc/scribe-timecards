@@ -46,8 +46,9 @@ export function ExtractModal({ onComplete }: ExtractModalProps) {
       const json: ApiResponse<ProcessApiResponse> = await res.json();
       apiResultRef.current = json.data;
       if (animDoneRef.current) {
-        onComplete(json.data);
+        const data = json.data;
         setIsOpen(false);
+        setTimeout(() => onComplete(data), 0);
       }
     } catch {
       setStep('upload');
@@ -57,8 +58,9 @@ export function ExtractModal({ onComplete }: ExtractModalProps) {
   function handleAnimationComplete() {
     animDoneRef.current = true;
     if (apiResultRef.current) {
-      onComplete(apiResultRef.current);
+      const data = apiResultRef.current;
       setIsOpen(false);
+      setTimeout(() => onComplete(data), 0);
     }
   }
 

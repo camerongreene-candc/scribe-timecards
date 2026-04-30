@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { AutocompleteInput } from '@castandcrew/platform-ui';
+import React, { useRef, useEffect, useState, useSyncExternalStore } from 'react';
+import AutocompleteInput from '../../../components/AutocompleteInput';
 import { ScribeTextField } from '../components';
+import { useReviewContext } from '../../../components/review-bar/ReviewContext';
 import type { ColumnDef } from '@tanstack/react-table';
 import type { EmployeeRow } from './DailyTimesheetPage.types';
 import {
@@ -11,26 +12,117 @@ import {
 import styles from '../DailyTimesheetPage.module.css';
 
 interface DTSCellProps {
-  initialValue: string;
-  hasConfidence: boolean;
+  rowId: string;
+  fieldKey: string;
   label: string;
+  value: string;
 }
 
-function DTSCell({ initialValue, hasConfidence, label }: DTSCellProps) {
-  const [value, setValue] = useState(initialValue);
-  const [reviewed, setReviewed] = useState(false);
+function DTSCell({ rowId, fieldKey, label, value }: DTSCellProps) {
+  const { store, getRowConfidence, onCellChange, onCellAccept } = useReviewContext();
+
+  const hasConfidence = getRowConfidence(rowId, fieldKey);
+
+  const cellKey = `${rowId}::${fieldKey}`;
+  const snapshotCache = useRef({
+    hasReviewItems: false,
+    isActive: false,
+    isAccepted: false,
+    isModified: false,
+  });
+  const {
+    hasReviewItems,
+    isActive,
+    isAccepted: accepted,
+    isModified: modified,
+  } = useSyncExternalStore(
+    store.subscribe,
+    () => {
+      const { hasReviewItems, activeRowId, activeField, acceptedKeys, showReviewBar } = store.volatile;
+      const isActive = activeRowId === rowId && activeField === fieldKey;
+      const inAccepted = acceptedKeys.has(cellKey);
+      const next = {
+        hasReviewItems,
+        isActive,
+        isAccepted: showReviewBar && inAccepted,
+        isModified: inAccepted,
+      };
+      const prev = snapshotCache.current;
+      if (
+        prev.hasReviewItems === next.hasReviewItems &&
+        prev.isActive === next.isActive &&
+        prev.isAccepted === next.isAccepted &&
+        prev.isModified === next.isModified
+      ) return prev;
+      snapshotCache.current = next;
+      return next;
+    },
+  );
+
+  // Local draft so typing only re-renders this cell, not the whole table.
+  // Global state (rows) is updated on blur or Enter.
+  const [draft, setDraft] = useState(value);
+  const [locallyModified, setLocallyModified] = useState(false);
+
+  // Sync draft when the prop changes externally (e.g. extraction fills data).
+  const prevValueRef = useRef(value);
+  if (prevValueRef.current !== value) {
+    prevValueRef.current = value;
+    setDraft(value);
+    setLocallyModified(false);
+  }
+
+  const cellRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    console.log(`[text-focus] ${rowId}::${fieldKey} isActive=${isActive} inputRef=${inputRef.current ? 'attached' : 'null'}`);
+    if (!isActive) return;
+    cellRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+    const t = setTimeout(() => {
+      console.log(`[text-focus] setTimeout fired for ${rowId}::${fieldKey} — inputRef=${inputRef.current ? 'attached' : 'null'} activeElement=${document.activeElement?.tagName}`);
+      inputRef.current?.focus();
+      console.log(`[text-focus] after focus() — activeElement=${document.activeElement?.tagName} isSame=${document.activeElement === inputRef.current}`);
+    }, 0);
+    return () => clearTimeout(t);
+  }, [isActive]);
+
+  function commit() {
+    if (locallyModified) onCellChange(rowId, fieldKey, draft);
+  }
+
   return (
-    <ScribeTextField
-      aria-label={label}
-      value={value}
-      needsReview={hasConfidence && !reviewed}
-      className={styles.dts_cellInput}
-      size='sm'
-      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-        setValue(e.target.value);
-        if (!reviewed) setReviewed(true);
-      }}
-    />
+    <div ref={cellRef} className={styles.dts_cellOuter}>
+      <ScribeTextField
+        inputRef={inputRef}
+        aria-label={label}
+        value={draft}
+        needsReview={hasReviewItems && hasConfidence && !isActive && !(modified || locallyModified)}
+        isActive={isActive}
+        isAccepted={accepted}
+        className={styles.dts_cellInput}
+        size='sm'
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+          setDraft(e.target.value);
+          setLocallyModified(true);
+        }}
+        onBlur={() => {
+          commit();
+          if (!isActive || !(accepted || locallyModified)) return;
+          const reviewBar = document.querySelector('[aria-label="AI confidence review"]');
+          if (reviewBar?.contains(document.activeElement)) return;
+          onCellAccept(rowId, fieldKey);
+        }}
+        inputProps={{
+          onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => {
+            if (e.key === 'Enter') {
+              commit();
+              onCellAccept(rowId, fieldKey);
+            }
+          },
+        }}
+      />
+    </div>
   );
 }
 
@@ -43,17 +135,95 @@ export function makeTF(
     id,
     accessorKey: id,
     header,
-    cell: ({ getValue, row }) => (
+    cell: ({ row, getValue }) => (
       <DTSCell
-        initialValue={getValue() as string}
-        hasConfidence={
-          (getValue() as string) !== '' &&
-          row.original._confidence?.[id] === false
-        }
+        rowId={row.original.id}
+        fieldKey={id}
         label={label}
+        value={(getValue() ?? '') as string}
       />
     ),
   };
+}
+
+interface DTSSelectCellProps {
+  rowId: string;
+  fieldKey: string;
+  label: string;
+  options: { id: string; label: string }[];
+  value: string;
+}
+
+function DTSSelectCell({ rowId, fieldKey, label, options, value }: DTSSelectCellProps) {
+  const { store, getRowConfidence, onCellChange, onCellAccept } = useReviewContext();
+
+  const hasConfidence = getRowConfidence(rowId, fieldKey);
+  const cellKey = `${rowId}::${fieldKey}`;
+
+  const snapshotCache = useRef({
+    hasReviewItems: false,
+    isActive: false,
+    isAccepted: false,
+    isModified: false,
+  });
+  const { hasReviewItems, isActive, isAccepted: accepted } = useSyncExternalStore(
+    store.subscribe,
+    () => {
+      const { hasReviewItems, activeRowId, activeField, acceptedKeys, showReviewBar } = store.volatile;
+      const isActive = activeRowId === rowId && activeField === fieldKey;
+      const inAccepted = acceptedKeys.has(cellKey);
+      const next = {
+        hasReviewItems,
+        isActive,
+        isAccepted: showReviewBar && inAccepted,
+        isModified: inAccepted,
+      };
+      const prev = snapshotCache.current;
+      if (
+        prev.hasReviewItems === next.hasReviewItems &&
+        prev.isActive === next.isActive &&
+        prev.isAccepted === next.isAccepted &&
+        prev.isModified === next.isModified
+      ) return prev;
+      snapshotCache.current = next;
+      return next;
+    },
+  );
+
+  const cellRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    console.log(`[select-focus] ${rowId}::${fieldKey} isActive=${isActive} inputRef=${inputRef.current ? 'attached' : 'null'}`);
+    if (!isActive) return;
+    cellRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+    const t = setTimeout(() => {
+      console.log(`[select-focus] setTimeout fired for ${rowId}::${fieldKey} — inputRef=${inputRef.current ? 'attached' : 'null'} activeElement=${document.activeElement?.tagName}`);
+      inputRef.current?.focus();
+      console.log(`[select-focus] after focus() — activeElement=${document.activeElement?.tagName} isSame=${document.activeElement === inputRef.current}`);
+    }, 0);
+    return () => clearTimeout(t);
+  }, [isActive]);
+
+  return (
+    <div ref={cellRef}>
+      <AutocompleteInput
+        aria-label={label}
+        options={options}
+        selectedKey={value || null}
+        onSelectionChange={(key) => {
+          onCellChange(rowId, fieldKey, String(key ?? ''));
+          onCellAccept(rowId, fieldKey);
+        }}
+        className={styles.dts_cellSelect}
+        popoverClassName={styles.dts_cellSelectPopover}
+        inputRef={inputRef}
+        needsReview={hasReviewItems && hasConfidence && !isActive && !accepted}
+        isActive={isActive}
+        isAccepted={accepted}
+      />
+    </div>
+  );
 }
 
 export function makeSelect(
@@ -65,19 +235,19 @@ export function makeSelect(
     id,
     accessorKey: id,
     header,
-    cell: ({ getValue }) => (
-      <AutocompleteInput
-        aria-label={header}
+    cell: ({ row, getValue }) => (
+      <DTSSelectCell
+        rowId={row.original.id}
+        fieldKey={id}
+        label={header}
         options={options}
-        defaultSelectedKey={getValue() as string}
-        className={styles.dts_cellSelect}
+        value={(getValue() ?? '') as string}
       />
     ),
   };
 }
 
-export function makeDefaultColumns(): ColumnDef<EmployeeRow, unknown>[] {
-  return [
+export const DEFAULT_COLUMNS: ColumnDef<EmployeeRow, unknown>[] = [
     makeTF('firstName',  'First Name'),
     makeTF('lastName',   'Last Name'),
     makeTF('department', 'Department'),
@@ -97,7 +267,10 @@ export function makeDefaultColumns(): ColumnDef<EmployeeRow, unknown>[] {
     makeTF('epi',        'Epi'),
     makeTF('rate',       'Rate'),
     makeTF('ff1',        'FF1'),
-  ];
+];
+
+export function makeDefaultColumns(): ColumnDef<EmployeeRow, unknown>[] {
+  return DEFAULT_COLUMNS;
 }
 
 export const ADDITIONAL_FIELD_DEFS: {

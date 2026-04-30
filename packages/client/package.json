@@ -17,7 +17,10 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.14.2",
-    "three": "^0.184.0"
+    "three": "^0.184.0",
+    "react-aria": "^3.44.0",
+    "clsx": "^2.1.1",
+    "react-aria-components": "^1.13.0"
   },
   "devDependencies": {
     "@types/react": "^18.3.3",

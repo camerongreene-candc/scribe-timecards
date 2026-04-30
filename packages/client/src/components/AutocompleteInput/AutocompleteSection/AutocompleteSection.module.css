@@ -1,0 +1,16 @@
+@layer spotlight-ui.components {
+  .spotlight_AutocompleteSection {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  .spotlight_AutocompleteSection_header {
+    padding: var(--space-xs) var(--space-sm);
+    font-weight: var(--text-weight-label-sm);
+    font-size: var(--text-size-label-sm);
+    color: var(--input-color-text-secondary);
+    border-bottom: 1px solid var(--input-color-border-secondary);
+    margin-bottom: var(--space-xs);
+  }
+}

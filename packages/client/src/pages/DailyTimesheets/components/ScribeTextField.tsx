@@ -6,20 +6,32 @@ type BaseProps = Omit<React.ComponentProps<typeof TextField>, 'isInvalid' | 'end
 
 interface ScribeTextFieldProps extends BaseProps {
   needsReview?: boolean;
+  isActive?: boolean;
+  isAccepted?: boolean;
   isDiscrepancy?: boolean;
   endAdornment?: React.ReactNode;
 }
 
 export default function ScribeTextField({
   needsReview,
+  isActive,
+  isAccepted,
   isDiscrepancy,
   endAdornment,
   ...props
 }: ScribeTextFieldProps) {
+  const stateClass = isActive
+    ? styles.activeCell
+    : isAccepted
+      ? styles.acceptedCell
+      : needsReview
+        ? styles.mediumConfidence
+        : undefined;
+
   return (
     <TextField
       {...props}
-      className={[props.className, needsReview ? styles.mediumConfidence : undefined].filter(Boolean).join(' ') || undefined}
+      className={[props.className, stateClass].filter(Boolean).join(' ') || undefined}
       endAdornment={
         isDiscrepancy ? (
           <Tooltip

@@ -1,0 +1,61 @@
+@layer spotlight-ui.components {
+  .spotlight_AutocompleteOption {
+    display: flex;
+    align-items: center;
+    color: var(--input-select-option-color-text-primary);
+    border-radius: var(--input-select-option-border-radius-primary);
+    background: var(--input-select-option-color-background-primary);
+    padding: var(--input-select-option-space-edge-to-element-vertical-primary)
+      var(--input-select-option-space-edge-to-element-horizontal-primary);
+    gap: var(
+      --input-select-option-space-element-to-element-horizontal-secondary
+    );
+    cursor: pointer;
+  }
+
+  .spotlight_AutocompleteOption_content {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    width: 100%;
+  }
+
+  .spotlight_AutocompleteOption_icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .spotlight_AutocompleteOption_text {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .spotlight_AutocompleteOption_label {
+    font-size: var(--text-size-body-base);
+    font-weight: var(--text-weight-body-base);
+    line-height: var(--text-line-height-body-base);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .spotlight_AutocompleteOption_description {
+    font-size: var(--text-size-body-xs);
+    color: var(--input-color-text-secondary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .spotlight_AutocompleteOption_checkmark {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--input-select-option-color-text-primary);
+  }
+}

@@ -3,7 +3,42 @@
   flex-direction: column;
   min-height: 100vh;
   background-color: var(--color-background-page);
+  padding-top: var(--space-lg);
 }
+
+/* ── Body (sidebar + right column) ─────────────────────────────────────────── */
+
+.app_body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ── Right column (subnav + main) ───────────────────────────────────────────── */
+
+.app_column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ── Secondary tab nav ──────────────────────────────────────────────────────── */
+
+.app_subnav__left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  flex-shrink: 0;
+}
+
+.app_subnav__date {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-xs);
+}
+/* ── Main content area ──────────────────────────────────────────────────────── */
 
 .app_main {
   flex: 1;

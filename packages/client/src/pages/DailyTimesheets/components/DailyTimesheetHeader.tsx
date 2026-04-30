@@ -10,15 +10,22 @@ interface DailyTimesheetHeaderProps {
   onExtractComplete: (data: ProcessApiResponse) => void;
 }
 
-export default function DailyTimesheetHeader({ extraCols, onExtraColsChange, onExtractComplete }: DailyTimesheetHeaderProps) {
+export default function DailyTimesheetHeader({
+  extraCols,
+  onExtraColsChange,
+  onExtractComplete,
+}: DailyTimesheetHeaderProps) {
   return (
     <header className={styles.dts_header}>
       <div className={styles.dts_header__row}>
-
         <div className={styles.dts_header__dateSection}>
           <span className={styles.dts_header__dateLabel}>Date:</span>
           <div className={styles.dts_header__dateControls}>
-            <IconButton buttonVariant='ghost' iconName='chevron-left' aria-label='Previous day' />
+            <IconButton
+              buttonVariant='ghost'
+              iconName='chevron-left'
+              aria-label='Previous day'
+            />
             <div className={styles.dts_header__dateInputWrapper}>
               <TextField
                 aria-label='Selected date'
@@ -28,21 +35,27 @@ export default function DailyTimesheetHeader({ extraCols, onExtraColsChange, onE
                 endAdornment={<Icon iconName='calendar' />}
               />
             </div>
-            <IconButton buttonVariant='ghost' iconName='chevron-right' aria-label='Next day' />
+            <IconButton
+              buttonVariant='ghost'
+              iconName='chevron-right'
+              aria-label='Next day'
+            />
           </div>
         </div>
 
         <div className={styles.dts_header__actions}>
           <Button buttonVariant='solid'>Save</Button>
           <Button buttonVariant='outlined'>List Timecards</Button>
+          <ExtractModal onComplete={onExtractComplete} />
           <Button buttonVariant='ghost'>Clear All Changes</Button>
         </div>
 
         <div className={styles.dts_header__secondary}>
-          <ExtractModal onComplete={onExtractComplete} />
-          <AdditionalFieldsSelect selectedCols={extraCols} onChange={onExtraColsChange} />
+          <AdditionalFieldsSelect
+            selectedCols={extraCols}
+            onChange={onExtraColsChange}
+          />
         </div>
-
       </div>
     </header>
   );

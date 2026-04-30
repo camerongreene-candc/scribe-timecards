@@ -12,6 +12,7 @@
   font-family: var(--font-family-base);
   overflow: hidden;
   padding: var(--space-2xl) var(--space-3xl);
+  padding-top: 0;
 }
 
 .dts_content {
@@ -106,18 +107,29 @@
   gap: var(--space-xs);
 }
 
+/* ── Review bar strip ────────────────────────────────────────────────────── */
+
+.dts_reviewBarStrip {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  padding: var(--space-sm) var(--space-md);
+  background-color: var(--color-background-secondary);
+}
+
+/* ── Review cell states ───────────────────────────────────────────────────── */
+
+.dts_cellOuter {
+  display: inline-flex;
+  align-items: center;
+}
+
 /* ── Table wrapper ────────────────────────────────────────────────────────── */
 
 .dts_tableWrapper {
-  overflow: hidden;
+  overflow: auto;
   border-radius: var(--border-radius-md);
   border: 1px solid var(--color-border-primary);
-}
-
-.dts_tableScroll {
-  width: 100%;
-  height: 100%;
-  overflow: auto;
 }
 
 /* ── Table ────────────────────────────────────────────────────────────────── */
@@ -220,7 +232,7 @@
 .dts_tableScroll {
   width: 100%;
   height: 100%;
-  overflow: auto;
+  overflow: visible;
 }
 
 .dts_cellInput :global([class*='spotlight_TextField-Group']) {
@@ -251,7 +263,6 @@
   font-size: var(--font-size-xs);
   font-family: var(--font-family-base);
   color: var(--color-text-primary);
-  background-color: var(--color-background-primary);
 }
 
 /* ── Right filter panel ───────────────────────────────────────────────────── */

@@ -8,9 +8,7 @@
 .wtc_page {
   display: flex;
   height: 100vh;
-  overflow: hidden;
   font-family: var(--font-family-base);
-  padding: var(--space-2xl) 0;
 }
 
 .wtc_content {
@@ -18,8 +16,9 @@
   flex-direction: column;
   flex: 1;
   min-width: 0;
-  overflow: auto;
+  overflow-x: hidden;
   padding: var(--space-sm);
+  padding-bottom: 150px;
 }
 
 /* ── Left drawer ─────────────────────────────────────────────────────────── */
@@ -201,8 +200,10 @@
   flex-shrink: 0;
   margin: var(--space-md) 0;
   border-radius: var(--table-space-border-radius-primary);
-  border: var(--table-border-weight-primary) solid var(--table-color-border-primary);
-  overflow: hidden;
+  border: var(--table-border-weight-primary) solid
+    var(--table-color-border-primary);
+  overflow-x: scroll;
+  height: fit-content;
 }
 
 /* Day cell (name + date stacked) — used in GridTable cell renderer */

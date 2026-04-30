@@ -1,0 +1,77 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   ReviewBar.module.css
+   Floating fixed pill shown after AI extraction.
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.reviewBar {
+  position: fixed;
+  bottom: var(--space-7xl);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--button-space-element-to-element-horizontal-primary, 4px);
+  padding: 0 var(--button-space-edge-to-element-horizontal-primary, 12px);
+  height: 58px;
+  border-radius: 20px;
+  border: var(--border-weight-heaviest, 2px) solid var(--color-brand-primary-800, #1b7d7f);
+  background: var(--color-extended-primary-200, #f3f0eb);
+  box-shadow:
+    0 4px 12px -4px rgba(0, 0, 0, 0.04),
+    0 12px 32px -8px rgba(0, 0, 0, 0.06);
+  white-space: nowrap;
+}
+
+.reviewBar__label {
+  display: flex;
+  align-items: center;
+  padding: 0 var(--space-sm);
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--button-color-text-secondary);
+}
+
+.reviewBar__divider {
+  width: 2px;
+  height: 44px;
+  flex-shrink: 0;
+  background-color: var(--color-brand-primary-800, #1b7d7f);
+}
+
+.reviewBar__nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 0 var(--space-xs);
+}
+
+.reviewBar__counter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 28px;
+  min-width: 56px;
+  padding: 0 var(--space-sm);
+  border-radius: 14px;
+  border: 1px solid var(--color-brand-primary-800, #1b7d7f);
+  background-color: rgba(27, 125, 127, 0.12);
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--button-color-text-secondary);
+}
+
+.reviewBar__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding-left: var(--space-3xl);
+}
+
+.reviewBar__close {
+  display: flex;
+  align-items: center;
+  padding-left: var(--space-xs);
+}

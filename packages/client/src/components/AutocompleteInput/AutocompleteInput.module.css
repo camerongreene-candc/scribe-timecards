@@ -1,0 +1,227 @@
+/* ── Scribe review state — outside the layer so specificity wins ── */
+
+.mediumConfidence {
+  border-color: var(--color-border-attention-secondary) !important;
+  background-color: var(--color-background-attention-secondary) !important;
+  transition: 0.3s border-color;
+}
+
+.activeCell {
+  background-color: #fff3cc !important;
+  border: 1.5px solid #ba7511 !important;
+  transition: 0.15s border-color, 0.15s background-color;
+}
+
+.acceptedCell {
+  background-color: #eaf3de !important;
+  border: 1.5px solid #639922 !important;
+  transition: 0.15s border-color, 0.15s background-color;
+}
+
+@layer spotlight-ui.components {
+  .spotlight_AutocompleteInput {
+    gap: var(--field-space-element-to-element-vertical-primary);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    position: relative;
+    box-sizing: border-box;
+    min-width: 150px;
+    flex: 1;
+  }
+
+  .spotlight_AutocompleteInput-full-width {
+    display: flex;
+    width: 100%;
+  }
+
+  .spotlight_AutocompleteInput_group {
+    display: flex;
+    align-items: center;
+    align-self: stretch;
+    border-radius: var(--input-border-radius-primary);
+    border: var(--input-border-weight-primary) solid
+      var(--input-color-border-primary);
+    outline: var(--border-weight-heaviest) solid transparent;
+    outline-offset: calc(-1 * var(--border-weight-heaviest));
+    background: var(--input-color-background-primary);
+    padding: var(--input-space-edge-to-element-vertical-primary)
+      var(--input-space-edge-to-element-horizontal-primary);
+    gap: var(--input-space-element-to-element-horizontal-primary);
+
+    &:global(.spotlight_selected-selected) {
+      outline-color: var(--input-color-border-primary);
+    }
+  }
+
+  .spotlight_AutocompleteInput-readonly {
+    cursor: default;
+    border: var(--input-border-weight-primary) solid
+      var(--input-color-border-read-only-primary);
+    background: var(--input-color-background-read-only-primary);
+  }
+
+  .spotlight_AutocompleteInput_adornment {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--input-color-content-primary);
+  }
+
+  .spotlight_AutocompleteInput_input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: var(--text-font-san-serif);
+    font-size: var(--text-size-body-base);
+    color: var(--input-color-text-primary);
+    min-width: 0;
+
+    &::placeholder {
+      color: var(--input-color-text-secondary);
+    }
+
+    &:read-only {
+      cursor: default;
+    }
+  }
+
+  .spotlight_AutocompleteInput_button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: var(--space-xxs);
+    color: var(--input-color-content-primary);
+
+    &[data-disabled] {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+  }
+
+  .spotlight_AutocompleteInput_clear {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: var(--space-xxs);
+    border-radius: var(--border-radius-sm);
+    color: var(--color-content-brand-accent-primary);
+
+    &:hover {
+      opacity: 0.7;
+    }
+  }
+
+  .spotlight_AutocompleteInput_loading {
+    display: flex;
+    align-items: center;
+    animation: spotlight_AutocompleteInput_spin 1s linear infinite;
+    color: var(--input-color-content-primary);
+  }
+
+  @keyframes spotlight_AutocompleteInput_spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .spotlight_AutocompleteInput_popover {
+    border-radius: var(--input-border-radius-primary);
+    border: var(--border-weight-default) solid
+      var(--input-color-border-secondary);
+    background: var(--input-color-background-primary);
+    width: var(--trigger-width);
+    max-height: min(300px, 50vh);
+    overflow: auto;
+    padding: var(--space-xs);
+    box-shadow: var(--shadow-elevation-medium);
+  }
+
+  .spotlight_AutocompleteInput_list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    outline: none;
+  }
+
+  .spotlight_AutocompleteInput_option {
+    display: flex;
+    align-items: center;
+    color: var(--input-select-option-color-text-primary);
+    border-radius: var(--input-select-option-border-radius-primary);
+    background: var(--input-select-option-color-background-primary);
+    padding: var(--input-select-option-space-edge-to-element-vertical-primary)
+      var(--input-select-option-space-edge-to-element-horizontal-primary);
+    gap: var(
+      --input-select-option-space-element-to-element-horizontal-secondary
+    );
+    cursor: pointer;
+    transition: background-color 200ms ease-out;
+    outline: none;
+  }
+
+  .spotlight_AutocompleteInput_option[data-focused] {
+    background: var(--input-select-option-color-background-secondary);
+    outline: var(--border-weight-200) solid var(--color-border-focus);
+    outline-offset: -2px;
+  }
+
+  .spotlight_AutocompleteInput_option[data-hovered] {
+    background: var(--input-select-option-color-background-secondary);
+  }
+
+  .spotlight_AutocompleteInput_section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  .spotlight_AutocompleteInput_sectionHeader {
+    padding: var(--space-xs) var(--space-sm);
+    font-weight: var(--text-weight-label-sm);
+    font-size: var(--text-size-label-sm);
+    color: var(--input-color-text-secondary);
+    border-bottom: var(--border-weight-default) solid
+      var(--input-color-border-secondary);
+    margin-bottom: var(--space-xs);
+  }
+
+  .spotlight_AutocompleteInput_empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
+    padding: var(--space-md);
+    text-align: center;
+    color: var(--input-color-text-secondary);
+    font-style: italic;
+  }
+
+  .spotlight_AutocompleteInput_createOption {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    color: var(--text-color-link-default);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .spotlight_AutocompleteInput_loading {
+      animation: none;
+    }
+
+    .spotlight_AutocompleteInput_option {
+      transition: none;
+    }
+  }
+}
