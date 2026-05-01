@@ -364,7 +364,7 @@ export const DTSDaySchema = z
 
 export type DTSDay = z.infer<typeof DTSDaySchema>
 
-export type ProcessResponse = { employeeName: string; day: Partial<DTSDay> }
+export type ProcessResponse = { employeeName: string; day: Partial<DTSDay>; ndb?: boolean | null }
 
 export type FieldConfidenceMap = { employeeName: string; flaggedFields: string[] }
 

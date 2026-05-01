@@ -114,6 +114,7 @@ export function applyExtractToRows(prev: EmployeeRow[], { results, confidence, v
       loc:       day.location            || row.loc,
       set:       day.set                 || row.set,
       epi:       day.episode?.name       ?? row.epi,
+      ndb:       match.ndb != null ? match.ndb : row.ndb,
       rate:      (day.rate != null ? String(day.rate) : '') || row.rate,
       _confidence: {
         dayType:   ok('dayType'),
@@ -134,6 +135,7 @@ export function applyExtractToRows(prev: EmployeeRow[], { results, confidence, v
         set:       ok('set'),
         epi:       ok('episode'),
         rate:      ok('dailyRate'),
+        ndb:       ok('ndb'),
       },
       _discrepancy: Object.fromEntries(
         (validation.find((v) => v.employeeName === match.employeeName)?.flaggedFields ?? [])

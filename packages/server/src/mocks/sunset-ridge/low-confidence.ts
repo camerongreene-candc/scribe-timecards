@@ -5,7 +5,7 @@ const WORK_ZONE = { country: 'US', state: 'TX', city: 'Fort Worth' }
 const COMMON: Pick<ExtractionTimecard,
   'workDate' | 'dayType' | 'dailyRate' | 'workZone' | 'accountCode' |
   'series' | 'episode' | 'set' | 'location' |
-  'meal2Out' | 'meal2In' | 'meal3Out' | 'meal3In'
+  'meal2Out' | 'meal2In' | 'meal3Out' | 'meal3In' | 'ndb'
 > = {
   workDate:    { value: '2023-05-24',                                           confident: true },
   dayType:     { value: 'Worked',                                               confident: true },
@@ -20,6 +20,7 @@ const COMMON: Pick<ExtractionTimecard,
   meal2In:     { value: null,                                                   confident: true },
   meal3Out:    { value: null,                                                   confident: true },
   meal3In:     { value: null,                                                   confident: true },
+  ndb:         { value: true,                                                   confident: true },
 }
 
 function emp(
@@ -53,6 +54,7 @@ export const sunsetRidgeLowConfidence: ExtractionResult = {
       meal1Out:  { value: 20.5,  confident: true },
       meal1In:   { value: 21.5,  confident: true },
       wrapTime:  { value: 29.6,  confident: true },
+      ndb:       { value: true, confident: true },
     },
     {
       ...COMMON,
@@ -61,6 +63,7 @@ export const sunsetRidgeLowConfidence: ExtractionResult = {
       meal1Out:  { value: 20.5,  confident: true },
       meal1In:   { value: 21.5,  confident: true },
       wrapTime:  { value: 30.0,  confident: true },
+      ndb:       { value: true, confident: true },
     },
     {
       ...COMMON,
@@ -69,6 +72,7 @@ export const sunsetRidgeLowConfidence: ExtractionResult = {
       meal1Out:  { value: 20.5,  confident: false },  // low confidence from source
       meal1In:   { value: 21.5,  confident: true  },
       wrapTime:  { value: 29.6,  confident: true  },
+      ndb:       { value: true, confident: true },
     },
     {
       ...COMMON,
@@ -77,6 +81,7 @@ export const sunsetRidgeLowConfidence: ExtractionResult = {
       meal1Out:  { value: 20.5,  confident: true },
       meal1In:   { value: 21.5,  confident: true },
       wrapTime:  { value: 29.6,  confident: true },
+      ndb:       { value: true, confident: true },
     },
     {
       ...COMMON,
@@ -85,6 +90,7 @@ export const sunsetRidgeLowConfidence: ExtractionResult = {
       meal1Out:  { value: 20.5,  confident: true },
       meal1In:   { value: 21.5,  confident: true },
       wrapTime:  { value: 29.2,  confident: true },
+      ndb:       { value: true, confident: true },
     },
     {
       ...COMMON,
@@ -93,6 +99,7 @@ export const sunsetRidgeLowConfidence: ExtractionResult = {
       meal1Out:  { value: 20.5,  confident: false },  // low confidence from source
       meal1In:   { value: 21.5,  confident: true  },
       wrapTime:  { value: 29.2,  confident: true  },
+      ndb:       { value: true, confident: true },
     },
     {
       ...COMMON,
@@ -101,14 +108,16 @@ export const sunsetRidgeLowConfidence: ExtractionResult = {
       meal1Out:  { value: 20.5,  confident: true },
       meal1In:   { value: 21.5,  confident: true },
       wrapTime:  { value: 29.2,  confident: true },
+      ndb:       { value: true, confident: true },
     },
     {
       ...COMMON,
       employee: emp('Will Penson', 'Addl Set Lighting Tech'),
-      callTime:  { value: 15.0,  confident: false },  // low confidence from source
+      callTime:  { value: 15.0,  confident: false },
       meal1Out:  { value: 20.5,  confident: true  },
       meal1In:   { value: 21.5,  confident: true  },
       wrapTime:  { value: 29.2,  confident: true  },
+      ndb:       { value: false, confident: true },
     },
     {
       ...COMMON,
@@ -117,14 +126,16 @@ export const sunsetRidgeLowConfidence: ExtractionResult = {
       meal1Out:  { value: 20.5,  confident: true },
       meal1In:   { value: 21.5,  confident: true },
       wrapTime:  { value: 29.2,  confident: true },
+      ndb:       { value: false, confident: true },
     },
     {
       ...COMMON,
-      employee: emp('Alec Wisdom', 'Addl Set Lighting Tech', false),  // name low confidence from source
+      employee: emp('Alec Wisdom', 'Addl Set Lighting Tech', false),
       callTime:  { value: 14.0,  confident: true },
       meal1Out:  { value: 20.5,  confident: true },
       meal1In:   { value: 21.5,  confident: true },
       wrapTime:  { value: 29.2,  confident: true },
+      ndb:       { value: false, confident: true },
     },
   ],
 }

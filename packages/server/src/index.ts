@@ -29,6 +29,7 @@ app.post('/api/process', async (req, res) => {
     const results = extraction.timecards.map((t) => ({
       employeeName: t.employee.fullName.value,
       day: mapTimecardToDay(t),
+      ndb: t.ndb?.value ?? null,
     }))
 
     const confidence = extraction.timecards.map((t) => ({

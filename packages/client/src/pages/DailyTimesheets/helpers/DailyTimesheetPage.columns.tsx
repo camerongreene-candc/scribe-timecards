@@ -333,8 +333,9 @@ export const DEFAULT_COLUMNS: ColumnDef<EmployeeRow, unknown>[] = [
     makeTF('meal1Out',   'Meal 1 Out'),
     makeTF('meal1In',    'Meal 1 In'),
     makeTF('lastManIn',  'Last Man In'),
-    makeTF('wrap',       'Wrap'),
-    makeTF('dailyAllow', 'Daily Allow'),
+    makeTF('wrap',         'Wrap'),
+    makeCheckbox('ndb',    'NDB'),
+    makeTF('dailyAllow',   'Daily Allow'),
     makeSelect('country', 'Country', COUNTRY_OPTIONS),
     makeTF('state',      'State'),
     makeTF('city',       'City'),
@@ -354,7 +355,6 @@ export const ADDITIONAL_FIELD_DEFS: {
   readonly?: boolean;
   type?: 'checkbox';
 }[] = [
-  { id: 'ndb', label: 'NDB', type: 'checkbox' },
   { id: 'ndbOut', label: 'NDB Out' },
   { id: 'ndbEnd', label: 'NDB End' },
   { id: 'ndm', label: 'NDM' },

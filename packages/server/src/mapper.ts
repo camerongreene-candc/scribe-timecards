@@ -95,12 +95,12 @@ export function mapTimecardToDay(t: ExtractionTimecard): Partial<DTSDay> {
 const FIELD_NAMES: (keyof ExtractionTimecard)[] = [
   'callTime', 'meal1Out', 'meal1In', 'meal2Out', 'meal2In',
   'meal3Out', 'meal3In', 'wrapTime', 'dayType', 'workDate',
-  'dailyRate', 'workZone', 'accountCode', 'series', 'episode', 'set', 'location',
+  'dailyRate', 'workZone', 'accountCode', 'series', 'episode', 'set', 'location', 'ndb',
 ]
 
 export function mapTimecardToFlaggedFields(t: ExtractionTimecard): string[] {
   return FIELD_NAMES.filter((key) => {
-    const field = t[key] as { confident: boolean }
-    return !field.confident
+    const field = t[key] as { confident: boolean } | undefined
+    return field != null && !field.confident
   })
 }

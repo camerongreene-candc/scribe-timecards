@@ -3,7 +3,7 @@ import type { RosterResult } from '@scribe-timecards/shared'
 export const sunsetRidgeRoster: RosterResult = {
   employees: [
     { firstName: 'John',    lastName: 'Gorman',    department: 'SET LIGHTING', union: '', occupation: 'CLT' },
-    { firstName: 'Daniel',  lastName: 'Del Toro',  department: 'SET LIGHTING', union: '', occupation: 'ACLT' },
+    { firstName: 'Daniel Del', lastName: 'Toro',    department: 'SET LIGHTING', union: '', occupation: 'ACLT' },
     { firstName: 'Will',    lastName: 'Dameron',   department: 'SET LIGHTING', union: '', occupation: 'Lighting Console Programmer' },
     { firstName: 'John',    lastName: 'Lee',       department: 'SET LIGHTING', union: '', occupation: 'Set Lighting Tech' },
     { firstName: 'Taylor',  lastName: 'Cremeens',  department: 'SET LIGHTING', union: '', occupation: 'Set Lighting Tech' },

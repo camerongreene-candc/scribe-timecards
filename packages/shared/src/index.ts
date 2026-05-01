@@ -65,6 +65,7 @@ export interface ExtractionTimecard {
   episode: Confident<string | null>
   set: Confident<string | null>
   location: Confident<string | null>
+  ndb?: Confident<boolean | null>
 }
 
 export interface ExtractionProduction {
