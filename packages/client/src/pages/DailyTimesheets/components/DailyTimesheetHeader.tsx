@@ -49,7 +49,6 @@ export default function DailyTimesheetHeader({
 
         <div className={styles.dts_header__actions}>
           <Button buttonVariant='solid' onPress={onSave}>Save</Button>
-          <Button buttonVariant='outlined'>List Timecards</Button>
           <ExtractModal projectId={projectId} onComplete={onExtractComplete} />
           <Button buttonVariant='ghost'>Clear All Changes</Button>
         </div>

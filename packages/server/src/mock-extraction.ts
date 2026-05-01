@@ -3,6 +3,8 @@ import { staticBloomRoster } from './mocks/static-bloom/roster.js'
 import { staticBloomHappy } from './mocks/static-bloom/happy.js'
 import { sunsetRidgeRoster } from './mocks/sunset-ridge/roster.js'
 import { sunsetRidgeLowConfidence } from './mocks/sunset-ridge/low-confidence.js'
+import { northernLightsRoster } from './mocks/northern-lights/roster.js'
+import { northernLightsDiscrepancy } from './mocks/northern-lights/discrepancy.js'
 
 // JSON Schema passed to output_config.format.schema in the real API call.
 // Kept here so the real implementation can import and reuse it.
@@ -141,11 +143,13 @@ export const timecardExtractionSchema = {
 const ROSTERS: Record<string, RosterResult> = {
   'static-bloom': staticBloomRoster,
   'sunset-ridge': sunsetRidgeRoster,
+  'northern-lights': northernLightsRoster,
 }
 
 const EXTRACTIONS: Record<string, ExtractionResult> = {
   'static-bloom': staticBloomHappy,
   'sunset-ridge': sunsetRidgeLowConfidence,
+  'northern-lights': northernLightsDiscrepancy,
 }
 
 export function mockRoster(project: string): RosterResult {

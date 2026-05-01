@@ -37,6 +37,8 @@ export default function DailyTimesheetPage({ projectId, rows, setRows, rowsProje
   // Always-fresh snapshots for use inside stable callbacks.
   const rowsRef = useRef<EmployeeRow[]>(rows);
   rowsRef.current = rows;
+  const extraColsRef = useRef<Set<string>>(extraCols);
+  extraColsRef.current = extraCols;
   const reviewItemsRef = useRef<ReviewItem[]>(reviewItems);
   reviewItemsRef.current = reviewItems;
 
@@ -65,7 +67,7 @@ export default function DailyTimesheetPage({ projectId, rows, setRows, rowsProje
 
     const additionalIds = new Set<string>(ADDITIONAL_FIELD_DEFS.map((f) => f.id));
     // DTSDay field names that differ from EmployeeRow additional column IDs
-    const DAY_FIELD_TO_COL: Record<string, string> = { series: 'ser', location: 'loc' };
+    const DAY_FIELD_TO_COL: Record<string, string> = { series: 'ser' };
     const populated = new Set<string>();
     for (const { day } of data.results) {
       for (const [field, value] of Object.entries(day)) {
@@ -78,13 +80,26 @@ export default function DailyTimesheetPage({ projectId, rows, setRows, rowsProje
       setExtraCols((prev) => new Set([...prev, ...populated]));
     }
 
+    const visibleAdditional = new Set([...extraColsRef.current, ...populated]);
+    const isVisible = (field: string) =>
+      !additionalIds.has(field) || visibleAdditional.has(field);
+
     const items: ReviewItem[] = [];
+    const seen = new Set<string>();
     for (const row of mergedRows) {
       if (row._confidence) {
         for (const [field, confident] of Object.entries(row._confidence)) {
-          if (confident === false) {
-            items.push({ rowId: row.id, field });
+          if (confident === false && isVisible(field)) {
+            const key = reviewKey(row.id, field);
+            if (!seen.has(key)) { seen.add(key); items.push({ rowId: row.id, field }); }
           }
+        }
+      }
+      if (row._discrepancy) {
+        for (const field of Object.keys(row._discrepancy)) {
+          if (!isVisible(field)) continue;
+          const key = reviewKey(row.id, field);
+          if (!seen.has(key)) { seen.add(key); items.push({ rowId: row.id, field }); }
         }
       }
     }
@@ -145,9 +160,6 @@ export default function DailyTimesheetPage({ projectId, rows, setRows, rowsProje
     );
   }, [reviewItems]);
 
-  const handleClose = useCallback(() => {
-    setShowReviewBar(false);
-  }, []);
 
   const handleSave = useCallback(() => {
     showSnackbar(
@@ -321,18 +333,15 @@ export default function DailyTimesheetPage({ projectId, rows, setRows, rowsProje
         </div>
       </div>
 
-      {showReviewBar && (
-        <ReviewBar
-          totalCount={reviewItems.length}
-          remainingCount={remainingCount}
-          currentIndex={reviewIndex + 1}
-          onPrev={handleReviewPrev}
-          onNext={handleReviewNext}
-          onAccept={handleAccept}
-          onAcceptAll={handleAcceptAll}
-          onClose={handleClose}
-        />
-      )}
+      <ReviewBar
+        totalCount={reviewItems.length}
+        remainingCount={remainingCount}
+        currentIndex={reviewIndex + 1}
+        onPrev={handleReviewPrev}
+        onNext={handleReviewNext}
+        onAccept={handleAccept}
+        onAcceptAll={handleAcceptAll}
+      />
     </ReviewContext.Provider>
   );
 }

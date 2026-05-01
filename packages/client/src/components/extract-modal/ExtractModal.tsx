@@ -75,14 +75,14 @@ export function ExtractModal({ projectId, onComplete }: ExtractModalProps) {
 
   return (
     <ModalProvider
-      title='Extract from Report'
+      title='Upload & Extract'
       open={isOpen}
       onOpenChange={handleOpenChange}
       height='28rem'
       footerClassName={step === 'processing' ? styles.footerHidden : undefined}
     >
       <ModalTrigger>
-        <Button buttonVariant='outlined'>Extract from DTS</Button>
+        <Button buttonVariant='outlined'>Upload &amp; Extract</Button>
       </ModalTrigger>
       <ModalContent>
         {step === 'upload' ? (

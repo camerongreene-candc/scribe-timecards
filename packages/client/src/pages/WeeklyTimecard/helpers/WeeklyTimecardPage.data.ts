@@ -6,41 +6,25 @@ export function rosterToDrawerTimecard(emp: RosterEmployee, i: number): DrawerTi
   return { id: i + 1, name, subtitle: emp.occupation || emp.department, status: 'draft', active: i === 0 };
 }
 
-export const EMPLOYEE = { name: 'ALFONSO, JENNIFER', weekEnding: '03-14-2026' };
-export const BATCH    = { code: '3249577', name: 'Test – 03-14-2026' };
+export const EMPLOYEE = { name: 'SACZEK, JOANNA', weekEnding: '04-02-2022' };
+export const BATCH    = { code: '3249577', name: 'WACO – 04-02-2022' };
 
 export const DRAWER_TIMECARDS: DrawerTimecard[] = [
-  { id: 1, name: 'ALFONSO, Jennifer',     subtitle: '21632A – PROD. FINAL CHECKER / MARK UP 2ND 6 MONTHS', status: 'pending_pa_review',  active: true  },
-  { id: 2, name: 'TOMASSI, Rolo',         subtitle: '10200A – CAMERA OPERATOR',                            status: 'draft',              active: false },
-  { id: 3, name: 'RENQUIST, Harry',       subtitle: '21632A – PROD. FINAL CHECKER / MARK UP 2ND 6 MONTHS', status: 'pending_pa_review',  active: false },
-  { id: 4, name: 'DANIKA, Renny',         subtitle: '30100B – GAFFER',                                     status: 'pending_upm_review', active: false },
-  { id: 5, name: 'BEN, Bonjourno',        subtitle: '20100A – KEY GRIP',                                   status: 'draft',              active: false },
-  { id: 6, name: 'DARREN, Nalaco',        subtitle: '10100C – DIRECTOR OF PHOTOGRAPHY',                    status: 'sent_to_cnc',        active: false },
-  { id: 7, name: 'VALIDATION, Amy',       subtitle: '50200A – SCRIPT SUPERVISOR',                          status: 'draft',              active: false },
-  { id: 8, name: 'CIRNFBHUKQM, Mary Ann', subtitle: '21632A – PROD. FINAL CHECKER / MARK UP 2ND 6 MONTHS', status: 'pending_pa_review', active: false },
+  { id: 1, name: 'SACZEK, Joanna',    subtitle: '0124 – COVID COORD / CCO',  status: 'pending_pa_review', active: true },
 ];
 
 export const WEEK_DATES = [
-  '2026-03-09', '2026-03-10', '2026-03-11', '2026-03-12',
-  '2026-03-13', '2026-03-14', '2026-03-15',
+  '2022-03-27', '2022-03-28', '2022-03-29', '2022-03-30',
+  '2022-03-31', '2022-04-01', '2022-04-02',
 ];
 
 export const WEEK_OPTIONS = WEEK_DATES.map((d) => ({ id: d, label: d }));
 
-const DAY_LABELS = [
-  { name: 'Monday',    date: '09 MAR' },
-  { name: 'Tuesday',   date: '10 MAR' },
-  { name: 'Wednesday', date: '11 MAR' },
-  { name: 'Thursday',  date: '12 MAR' },
-  { name: 'Friday',    date: '13 MAR' },
+export const DAY_ROWS: DayRow[] = [
+  { name: 'Monday',    date: '28 MAR', workLoc: 'S - Studio', dayType: '1 - WORK', callTime: '7:00',  wrap: '18:00', hours: '10.50', account: '0124', epi: '', ser: 'WACO', loc: 'Burbank', set: '', ff1: '', ff2: '' },
+  { name: 'Tuesday',   date: '29 MAR', workLoc: 'S - Studio', dayType: '1 - WORK', callTime: '7:00',  wrap: '19:00', hours: '11.50', account: '0124', epi: '', ser: 'WACO', loc: 'Burbank', set: '', ff1: '', ff2: '' },
+  { name: 'Wednesday', date: '30 MAR', workLoc: 'S - Studio', dayType: '1 - WORK', callTime: '8:00',  wrap: '17:00', hours: '8.50',  account: '0124', epi: '', ser: 'WACO', loc: 'Burbank', set: '', ff1: '', ff2: '' },
 ];
-
-export const DAY_ROWS: DayRow[] = DAY_LABELS.map((d) => ({
-  ...d,
-  workLoc: 'S - Studio', dayType: '1 - WORK', callTime: '8:00',
-  wrap: '17:00', hours: '9.00', account: 'fddf',
-  epi: '', ser: '', loc: 'LOC', set: '', ff1: '', ff2: '',
-}));
 
 export const MASTER_ROW: DayRow = {
   _isMaster: true,

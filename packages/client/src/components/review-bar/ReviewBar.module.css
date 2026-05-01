@@ -11,8 +11,8 @@
   z-index: 50;
   display: inline-flex;
   align-items: center;
-  gap: var(--button-space-element-to-element-horizontal-primary, 4px);
-  padding: 0 var(--button-space-edge-to-element-horizontal-primary, 12px);
+  gap: var(--space-md);
+  padding: 0 var(--space-2xl);
   height: 58px;
   border-radius: 20px;
   border: var(--border-weight-heaviest, 2px) solid var(--color-brand-primary-800, #1b7d7f);
@@ -26,11 +26,15 @@
 .reviewBar__label {
   display: flex;
   align-items: center;
-  padding: 0 var(--space-sm);
+  padding: 0 var(--space-md);
   font-family: var(--font-family-base);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-bold, 700);
   color: var(--button-color-text-secondary);
+}
+
+.reviewBar__label_idle {
+  padding: 0 var(--space-xl);
 }
 
 .reviewBar__divider {
@@ -43,8 +47,8 @@
 .reviewBar__nav {
   display: flex;
   align-items: center;
-  gap: var(--space-xs);
-  padding: 0 var(--space-xs);
+  gap: var(--space-sm);
+  padding: 0 var(--space-md);
 }
 
 .reviewBar__counter {
@@ -53,7 +57,7 @@
   justify-content: center;
   height: 28px;
   min-width: 56px;
-  padding: 0 var(--space-sm);
+  padding: 0 var(--space-md);
   border-radius: 14px;
   border: 1px solid var(--color-brand-primary-800, #1b7d7f);
   background-color: rgba(27, 125, 127, 0.12);
@@ -66,12 +70,6 @@
 .reviewBar__actions {
   display: flex;
   align-items: center;
-  gap: var(--space-xs);
-  padding-left: var(--space-3xl);
-}
-
-.reviewBar__close {
-  display: flex;
-  align-items: center;
-  padding-left: var(--space-xs);
+  gap: var(--space-sm);
+  padding: 0 var(--space-md);
 }

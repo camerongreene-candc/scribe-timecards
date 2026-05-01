@@ -342,7 +342,6 @@ export const DEFAULT_COLUMNS: ColumnDef<EmployeeRow, unknown>[] = [
     makeTF('account',    'Account'),
     makeTF('epi',        'Epi'),
     makeTF('rate',       'Rate'),
-    makeTF('ff1',        'FF1'),
 ];
 
 export function makeDefaultColumns(): ColumnDef<EmployeeRow, unknown>[] {

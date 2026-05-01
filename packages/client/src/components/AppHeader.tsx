@@ -4,14 +4,14 @@ import styles from './AppHeader.module.css';
 const PROJECTS = [
   {
     id: 'static-bloom',
-    name: 'Static BLOOM',
+    name: 'WACO - The Aftermath',
     code: 'SB-001',
     countryIsoCode: 'us' as const,
     countryTagLabel: 'USD',
   },
   {
     id: 'sunset-ridge',
-    name: 'Sunset Ridge',
+    name: 'Bass Reeves',
     code: 'SR-002',
     countryIsoCode: 'us' as const,
     countryTagLabel: 'USD',
@@ -20,8 +20,8 @@ const PROJECTS = [
     id: 'northern-lights',
     name: 'Northern Lights',
     code: 'NL-003',
-    countryIsoCode: 'ca' as const,
-    countryTagLabel: 'CAD',
+    countryIsoCode: 'us' as const,
+    countryTagLabel: 'USD',
   },
 ];
 

@@ -1,4 +1,4 @@
-import { Button, IconButton } from '@castandcrew/platform-ui';
+import { Button } from '@castandcrew/platform-ui';
 import styles from './ReviewBar.module.css';
 
 interface ReviewBarProps {
@@ -9,7 +9,6 @@ interface ReviewBarProps {
   onNext: () => void;
   onAccept: () => void;
   onAcceptAll: () => void;
-  onClose: () => void;
 }
 
 export function ReviewBar({
@@ -20,12 +19,13 @@ export function ReviewBar({
   onNext,
   onAccept,
   onAcceptAll,
-  onClose,
 }: ReviewBarProps) {
+  const hasItems = remainingCount > 0;
+
   return (
     <div className={styles.reviewBar} role="region" aria-label="AI confidence review">
-      <div className={styles.reviewBar__label}>
-        {remainingCount} {totalCount === 1 ? 'field needs' : 'fields need'} review
+      <div className={`${styles.reviewBar__label}${!hasItems ? ` ${styles.reviewBar__label_idle}` : ''}`}>
+        {hasItems ? `${remainingCount} ${remainingCount === 1 ? 'field' : 'fields'} remaining` : 'No items to review'}
       </div>
 
       <div className={styles.reviewBar__divider} />
@@ -36,13 +36,13 @@ export function ReviewBar({
           size="sm"
           startAdornment="arrow-left"
           onPress={onPrev}
-          isDisabled={currentIndex <= 1}
+          isDisabled={!hasItems || currentIndex <= 1}
         >
           Prev
         </Button>
 
         <div className={styles.reviewBar__counter}>
-          {currentIndex} / {totalCount}
+          {hasItems ? `${currentIndex} / ${totalCount}` : '—'}
         </div>
 
         <Button
@@ -50,7 +50,7 @@ export function ReviewBar({
           size="sm"
           endAdornment="arrow-right"
           onPress={onNext}
-          isDisabled={currentIndex >= totalCount}
+          isDisabled={!hasItems || currentIndex >= totalCount}
         >
           Next
         </Button>
@@ -62,6 +62,7 @@ export function ReviewBar({
           size="sm"
           startAdornment="check"
           onPress={onAccept}
+          isDisabled={!hasItems}
         >
           Accept
         </Button>
@@ -69,21 +70,12 @@ export function ReviewBar({
         <Button
           buttonVariant="outlined"
           size="sm"
-          startAdornment="copy"
+          startAdornment="check-double"
           onPress={onAcceptAll}
+          isDisabled={!hasItems}
         >
           Accept All
         </Button>
-      </div>
-
-      <div className={styles.reviewBar__close}>
-        <IconButton
-          buttonVariant="ghost"
-          size="sm"
-          iconName="xmark"
-          aria-label="Dismiss review bar"
-          onPress={onClose}
-        />
       </div>
     </div>
   );

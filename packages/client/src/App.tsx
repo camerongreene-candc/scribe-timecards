@@ -14,21 +14,21 @@ import {
 } from '@castandcrew/platform-ui';
 import DailyTimesheetPage from './pages/DailyTimesheets';
 import ReportsPage from './pages/Reports';
-import TransferOrbDevPage from './pages/TransferOrbDevPage';
+import WeeklyTimecardPage from './pages/WeeklyTimecard';
 import AppHeader from './components/AppHeader';
 import type { EmployeeRow } from './pages/DailyTimesheets/helpers/DailyTimesheetPage.types';
 import styles from './App.module.css';
 
 const NAV_LINKS = [
   { id: 'daily-timesheets', label: 'Daily Timesheets' },
-  {id: 'reports', label: 'Reports'},
-  { id: 'orb-dev', label: 'Orb Dev' },
+  { id: 'timecards', label: 'Timecards' },
+  { id: 'reports', label: 'Reports' },
 ];
 
 export default function App() {
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const selectedKey = pathname.replace(/^\//, '') || 'daily-timesheets';
+  const selectedKey = pathname.split('/')[1] || 'daily-timesheets';
   const [projectId, setProjectId] = useState('static-bloom');
 
   //moved table state up from dts page to reports page for generating csv purposes
@@ -93,7 +93,7 @@ export default function App() {
                   }
                 />
                 <Route path='reports' element={<ReportsPage rows={rows} />} />
-                <Route path='orb-dev' element={<TransferOrbDevPage />} />
+                <Route path='timecards' element={<WeeklyTimecardPage />} />
               </Routes>
             </SnackbarProvider>
           </main>
