@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import {
   Button,
   GridTable,
@@ -7,9 +7,8 @@ import {
   Checkbox,
 } from '@castandcrew/platform-ui';
 import type { ColumnDef } from '@tanstack/react-table';
+import type { EmployeeRow } from '../DailyTimesheets/helpers/DailyTimesheetPage.types';
 import styles from './ReportsPage.module.css';
-
-type Tab = 'on-demand' | 'schedule';
 
 type ReportRow = { id: string; name: string };
 
@@ -18,12 +17,28 @@ const ROWS: ReportRow[] = [
   { id: 'production-report', name: 'Production Report' },
 ];
 
-export default function ReportsPage() {
+export default function ReportsPage({ rows }: { rows: EmployeeRow[] }) {
   const today = new Date().toISOString().split('T')[0];
 
   const [hotCostDay, setHotCostDay] = useState(today);
   const [PRDay, setPRDay] = useState(today);
   const [includeSplits, setIncludeSplits] = useState(false);
+
+  const handleProductionReportRun = useCallback(async () => {
+    const res = await fetch('/api/export', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ rows }),
+    });
+    const csv = await res.text();
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'timecards.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [rows]);
 
   const columns = useMemo<ColumnDef<ReportRow, unknown>[]>(
     () => [
@@ -48,7 +63,7 @@ export default function ReportsPage() {
                 <Checkbox
                   label='Include Splits'
                   isChecked={includeSplits}
-                  onChange={(e) => setIncludeSplits(e.target.checked)}
+                  onChange={(e) => setIncludeSplits(e?.target.checked ?? false)}
                 />
               </div>
             );
@@ -72,12 +87,18 @@ export default function ReportsPage() {
         header: 'Action',
         size: 160,
         cell: ({ row }) => {
+          const isProductionReport = row.original.id === 'production-report';
           const isDisabled =
             (row.original.id === 'hot-cost' && !hotCostDay) ||
-            (row.original.id === 'production-report' && !PRDay);
+            (isProductionReport && !PRDay);
           return (
             <div className={styles.rpt_actionCell}>
-              <Button isFullWidth buttonVariant='solid' isDisabled={isDisabled}>
+              <Button
+                isFullWidth
+                buttonVariant='solid'
+                isDisabled={isDisabled}
+                onPress={isProductionReport ? handleProductionReportRun : undefined}
+              >
                 Run
               </Button>
             </div>
@@ -85,7 +106,7 @@ export default function ReportsPage() {
         },
       },
     ],
-    [hotCostDay, includeSplits, PRDay],
+    [hotCostDay, includeSplits, PRDay, handleProductionReportRun],
   );
 
   return (

@@ -1,4 +1,5 @@
-import { useState, useRef, useEffect, useMemo, useCallback, useLayoutEffect } from 'react';
+import { useRef, useEffect, useMemo, useCallback, useLayoutEffect, useState } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
 import { GridTable, useSnackbar } from '@castandcrew/platform-ui';
 import type { ProcessApiResponse, RosterResult } from '@scribe-timecards/shared';
 import type { ColumnDef } from '@tanstack/react-table';
@@ -17,9 +18,16 @@ interface ReviewItem {
 
 const reviewKey = (rowId: string, field: string) => `${rowId}::${field}`;
 
-export default function DailyTimesheetPage({ projectId }: { projectId: string }) {
+interface DailyTimesheetPageProps {
+  projectId: string;
+  rows: EmployeeRow[];
+  setRows: Dispatch<SetStateAction<EmployeeRow[]>>;
+  rowsProjectId: string | null;
+  setRowsProjectId: Dispatch<SetStateAction<string | null>>;
+}
+
+export default function DailyTimesheetPage({ projectId, rows, setRows, rowsProjectId, setRowsProjectId }: DailyTimesheetPageProps) {
   const showSnackbar = useSnackbar();
-  const [rows, setRows] = useState<EmployeeRow[]>([]);
   const [extraCols, setExtraCols] = useState<Set<string>>(new Set());
   const [reviewItems, setReviewItems] = useState<ReviewItem[]>([]);
   const [reviewIndex, setReviewIndex] = useState(0);
@@ -35,6 +43,7 @@ export default function DailyTimesheetPage({ projectId }: { projectId: string })
   const lastNavTrigger = useRef<string>('init');
 
   useEffect(() => {
+    if (rowsProjectId === projectId) return;
     setRows([]);
     setExtraCols(new Set());
     setReviewItems([]);
@@ -45,8 +54,9 @@ export default function DailyTimesheetPage({ projectId }: { projectId: string })
       .then((res) => res.json())
       .then(({ data }: { data: RosterResult }) => {
         setRows(data.employees.map(rosterToRow));
+        setRowsProjectId(projectId);
       });
-  }, [projectId]);
+  }, [projectId, rowsProjectId]);
 
   const handleExtractComplete = useCallback((data: ProcessApiResponse) => {
     const mergedRows = applyExtractToRows(rowsRef.current, data);

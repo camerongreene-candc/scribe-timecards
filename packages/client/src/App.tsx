@@ -16,6 +16,7 @@ import DailyTimesheetPage from './pages/DailyTimesheets';
 import ReportsPage from './pages/Reports';
 import TransferOrbDevPage from './pages/TransferOrbDevPage';
 import AppHeader from './components/AppHeader';
+import type { EmployeeRow } from './pages/DailyTimesheets/helpers/DailyTimesheetPage.types';
 import styles from './App.module.css';
 
 const NAV_LINKS = [
@@ -29,6 +30,11 @@ export default function App() {
   const { pathname } = useLocation();
   const selectedKey = pathname.replace(/^\//, '') || 'daily-timesheets';
   const [projectId, setProjectId] = useState('static-bloom');
+
+  //moved table state up from dts page to reports page for generating csv purposes
+  //in actuality, dts should save to DB on save & reports can pull from there
+  const [rows, setRows] = useState<EmployeeRow[]>([]);
+  const [rowsProjectId, setRowsProjectId] = useState<string | null>(null);
 
   return (
     <div className={styles.app_root}>
@@ -76,9 +82,17 @@ export default function App() {
                 />
                 <Route
                   path='daily-timesheets'
-                  element={<DailyTimesheetPage projectId={projectId} />}
+                  element={
+                    <DailyTimesheetPage
+                      projectId={projectId}
+                      rows={rows}
+                      setRows={setRows}
+                      rowsProjectId={rowsProjectId}
+                      setRowsProjectId={setRowsProjectId}
+                    />
+                  }
                 />
-                <Route path='reports' element={<ReportsPage />} />
+                <Route path='reports' element={<ReportsPage rows={rows} />} />
                 <Route path='orb-dev' element={<TransferOrbDevPage />} />
               </Routes>
             </SnackbarProvider>
