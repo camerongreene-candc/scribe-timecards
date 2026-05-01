@@ -35,7 +35,7 @@ export default function ReportsPage({ rows }: { rows: EmployeeRow[] }) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'timecards.csv';
+    a.download = 'Hours+ Production Report.csv';
     a.click();
     URL.revokeObjectURL(url);
   }, [rows]);
