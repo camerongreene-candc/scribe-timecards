@@ -15,7 +15,7 @@
   align-items: center;
   justify-content: center;
   height: 100%;
-  padding: 1rem 0;
+  width: 100%;
 }
 
 .dropzone {
@@ -23,31 +23,67 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  width: 17rem;
-  height: 9rem;
-  border: 2px dashed rgba(50, 130, 255, 0.35);
-  border-radius: 0.5rem;
-  background: none;
+  gap: var(--space-xl, 16px);
+  width: 80%;
+  border: 2px dashed var(--color-border-interactive-tertiary, #d8d9e0);
+  border-radius: 12px;
+  background: var(--color-background-interactive-tertiary, #fff);
   cursor: pointer;
   color: inherit;
-  padding: 0;
+  padding: var(--space-5xl, 16px) var(--space-4xl, 24px);
   transition: border-color 0.15s ease, background 0.15s ease;
 }
 
 .dropzone:hover {
-  border-color: rgba(50, 130, 255, 0.65);
-  background: rgba(50, 130, 255, 0.04);
+  border-color: #85a0ec;
+  background: var(--color-background-interactive-secondary, #f5f8ff);
 }
 
-.dropzone__label {
-  font-size: 0.875rem;
-  font-weight: 500;
+.dropzone__featuredIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-lg, 12px);
+  border-radius: 9999px;
+  background-color: #eaf2ff;
+  color: var(--color-icon-brand-primary, #1e55e9);
+  flex-shrink: 0;
+}
+
+.dropzone__textGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+}
+
+.dropzone__action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.dropzone__link {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e55e9;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  white-space: nowrap;
+}
+
+.dropzone__actionLabel {
+  font-size: 12px;
+  color: var(--color-text-interactive-primary, #1e1f24);
+  white-space: nowrap;
 }
 
 .dropzone__hint {
-  font-size: 0.75rem;
-  color: var(--color-text-secondary, #6b7280);
+  font-size: 12px;
+  color: var(--color-text-interactive-secondary, #62636c);
+  text-align: center;
 }
 
 .uploadCentered {

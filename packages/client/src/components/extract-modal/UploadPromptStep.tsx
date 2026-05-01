@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Icon, SpinningLoader } from '@castandcrew/platform-ui';
+import { Icon, SpinningLoader, FeaturedIcon } from '@castandcrew/platform-ui';
 import styles from './ExtractModal.module.css';
 
 type UploadState = 'idle' | 'loading' | 'ready';
@@ -33,9 +33,14 @@ export function UploadPromptStep({ onFileChange }: UploadPromptStepProps) {
           onClick={() => inputRef.current?.click()}
           aria-label='Select a file to upload'
         >
-          <Icon iconName='cloud-arrow-up' size='3xl' aria-hidden />
-          <span className={styles.dropzone__label}>Click to upload</span>
-          <span className={styles.dropzone__hint}>.pdf · .csv · .xlsx · .xls</span>
+          <FeaturedIcon iconName='file' size='lg' aria-hidden tone='info' className={styles.dropzone__icon} />
+          <div className={styles.dropzone__textGroup}>
+            <div className={styles.dropzone__action}>
+              <span className={`${styles.dropzone__link} spotlight_body-base`}>Click to upload</span>
+              <span className={`${styles.dropzone__actionLabel} spotlight_body-base`}>or drag and drop file(s)</span>
+            </div>
+            <span className={`${styles.dropzone__hint} spotlight_body-sm`}>.pdf, .xls, .xlsx, .doc, .docx, .txt, .csv, .jpg, .jpeg, .png (max. size 250MB)</span>
+          </div>
         </button>
       )}
 

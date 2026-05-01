@@ -35,19 +35,18 @@
   justify-content: center;
   width: 36px;
   height: 36px;
-  margin-bottom: var(--space-xs);
+  margin-top: var(--space-2xl);
   cursor: pointer;
 }
 
 .sidenav__badge {
   position: absolute;
-  top: 4px;
-  right: 4px;
-  width: 8px;
-  height: 8px;
+  top: 9px;
+  right: 8px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   background-color: #e03b2b;
-  border: 1.5px solid var(--color-background-primary);
 }
 
 .sidenav__divider {
