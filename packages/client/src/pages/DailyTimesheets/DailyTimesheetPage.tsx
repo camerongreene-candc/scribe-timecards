@@ -238,7 +238,7 @@ export default function DailyTimesheetPage({ projectId, rows, setRows, rowsProje
       showSnackbar(
         {
           alertTitleText: 'All fields reviewed!',
-          alertMessage: 'Be sure to save your changes.',
+          alertMessage: 'Your changes have been saved.',
         },
         {
           tone: 'success',
