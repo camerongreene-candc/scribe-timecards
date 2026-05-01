@@ -5,11 +5,11 @@ import type { DayRow, CommentRow, AllowanceRow, BreakdownRow, HistoryRow } from 
 import { SELECT_OPTIONS } from './WeeklyTimecardPage.data';
 import styles from '../WeeklyTimecardPage.module.css';
 
-const CALC_COL_IDS   = new Set(['hours']);
+const CALC_COL_IDS   = new Set(['callTime', 'wrap', 'hours']);
 const SELECT_COL_IDS = new Set(['workLoc', 'dayType', 'epi', 'loc']);
 
 const TABLE_COLUMNS = [
-  { id: 'workLoc',   label: 'Work Zone' },
+  { id: 'workLoc',   label: 'Work Loc' },
   { id: 'dayType',   label: 'Day Type'  },
   { id: 'callTime',  label: 'Call Time' },
   { id: 'wrap',      label: 'Wrap'      },
@@ -67,7 +67,7 @@ export const MAIN_COLUMNS: ColumnDef<DayRow, unknown>[] = [
         <TextField
           isFullWidth
           size='sm'
-          isInvalid={col.id === 'ser' && !value && !isMaster}
+          value={String(value)}
           inputProps={{ 'aria-label': col.label }}
           className={styles.wtc_cellInput}
         />

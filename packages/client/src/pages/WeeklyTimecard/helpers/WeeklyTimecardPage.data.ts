@@ -20,10 +20,11 @@ export const WEEK_DATES = [
 
 export const WEEK_OPTIONS = WEEK_DATES.map((d) => ({ id: d, label: d }));
 
+// Joanna Saczek — static-bloom mock extraction (2022-03-28)
+// callTime=8:00  meal1Out=14:00  meal1In=14:30  wrap=20:30
+// hoursWorked = 20.5 - 8.0 - (14.5 - 14.0) = 12.00
 export const DAY_ROWS: DayRow[] = [
-  { name: 'Monday',    date: '28 MAR', workLoc: 'S - Studio', dayType: '1 - WORK', callTime: '7:00',  wrap: '18:00', hours: '10.50', account: '0124', epi: '', ser: 'WACO', loc: 'Burbank', set: '', ff1: '', ff2: '' },
-  { name: 'Tuesday',   date: '29 MAR', workLoc: 'S - Studio', dayType: '1 - WORK', callTime: '7:00',  wrap: '19:00', hours: '11.50', account: '0124', epi: '', ser: 'WACO', loc: 'Burbank', set: '', ff1: '', ff2: '' },
-  { name: 'Wednesday', date: '30 MAR', workLoc: 'S - Studio', dayType: '1 - WORK', callTime: '8:00',  wrap: '17:00', hours: '8.50',  account: '0124', epi: '', ser: 'WACO', loc: 'Burbank', set: '', ff1: '', ff2: '' },
+  { name: 'Monday', date: '28 MAR', workLoc: 'S - Studio', dayType: '1 - WORK', callTime: '8:00', wrap: '20:30', hours: '12.00', account: '', epi: '', ser: '', loc: 'Burbank', set: '', ff1: '', ff2: '' },
 ];
 
 export const MASTER_ROW: DayRow = {

@@ -6,43 +6,53 @@ import {
   Tag,
   SelectableSingleTile,
   SelectableSingleTileGroup,
+  TextField,
 } from '@castandcrew/platform-ui';
 import type { DrawerTimecard } from '../helpers/WeeklyTimecardPage.types';
 
 import styles from '../WeeklyTimecardPage.module.css';
 
-type TagColorScheme = 'info' | 'critical' | 'neutral' | 'positive' | 'attention';
+type TagColorScheme =
+  | 'info'
+  | 'critical'
+  | 'neutral'
+  | 'positive'
+  | 'attention';
 
 const STATUS_LABEL: Record<string, string> = {
-  draft:              'Draft',
-  pending_pa_review:  'PA Review',
+  draft: 'Draft',
+  pending_pa_review: 'PA Review',
   pending_upm_review: 'UPM Review',
-  sent_to_cnc:        'Sent to C&C',
+  sent_to_cnc: 'Sent to C&C',
 };
 
 const STATUS_COLOR: Record<string, TagColorScheme> = {
-  draft:              'neutral',
-  pending_pa_review:  'attention',
+  draft: 'neutral',
+  pending_pa_review: 'attention',
   pending_upm_review: 'info',
-  sent_to_cnc:        'positive',
+  sent_to_cnc: 'positive',
 };
 
 function DrawerCard({ tc }: { tc: DrawerTimecard }) {
   return (
-    <SelectableSingleTile value={String(tc.id)} className={styles.wtc_drawer__tile}>
+    <SelectableSingleTile
+      value={String(tc.id)}
+      className={styles.wtc_drawer__tile}
+    >
       <div className={styles.wtc_drawer__tileTopRow}>
         <span className={styles.wtc_drawer__itemName}>{tc.name}</span>
-        <Icon iconName='circle-info' size='sm' className={styles.wtc_drawer__infoIcon} />
+        <Icon
+          iconName='circle-info'
+          familyVariant='regular'
+          size='sm'
+          className={styles.wtc_drawer__infoIcon}
+        />
       </div>
       {tc.subtitle && (
         <span className={styles.wtc_drawer__itemSubtitle}>{tc.subtitle}</span>
       )}
       <div className={styles.wtc_drawer__tileBottomRow}>
-        <Tag
-          tagText={STATUS_LABEL[tc.status] ?? tc.status.replace(/_/g, ' ')}
-          colorScheme={STATUS_COLOR[tc.status] ?? 'neutral'}
-          size='sm'
-        />
+        <Tag tagText='Ready for me' colorScheme='positive' />
       </div>
     </SelectableSingleTile>
   );
@@ -54,12 +64,18 @@ interface WeeklyTimecardDrawerProps {
   timecards: DrawerTimecard[];
 }
 
-export default function WeeklyTimecardDrawer({ isOpen, onToggle, timecards }: WeeklyTimecardDrawerProps) {
+export default function WeeklyTimecardDrawer({
+  isOpen,
+  onToggle,
+  timecards,
+}: WeeklyTimecardDrawerProps) {
   const [selectedId, setSelectedId] = useState('');
 
   useEffect(() => {
     if (timecards.length > 0 && !selectedId) {
-      setSelectedId(String(timecards.find((tc) => tc.active)?.id ?? timecards[0].id));
+      setSelectedId(
+        String(timecards.find((tc) => tc.active)?.id ?? timecards[0].id),
+      );
     }
   }, [timecards]);
 
@@ -78,23 +94,29 @@ export default function WeeklyTimecardDrawer({ isOpen, onToggle, timecards }: We
   return (
     <aside className={styles.wtc_drawer}>
       <div className={styles.wtc_drawer__header}>
-        <span className={styles.wtc_drawer__title}>Selected Timecards</span>
         <SquareIconToggleButton
+          size='lg'
           iconName='arrow-left-from-line'
           aria-label='Collapse drawer'
           onClick={() => onToggle(false)}
         />
       </div>
 
-      <div className={styles.wtc_drawer__search}>
-        <Icon iconName='magnifying-glass' size='sm' />
-        <input
-          className={styles.wtc_drawer__searchInput}
-          placeholder='Search text'
-          aria-label='Search timecards'
-        />
-        <SquareIconToggleButton iconName='filter' aria-label='Filter' />
-        <SquareIconToggleButton iconName='bars-sort' aria-label='Sort' />
+      <div className={styles.wtc_drawer__titleRow}>
+        <span className={`${styles.wtc_drawer__title} spotlight_label-base`}>
+          Selected Timecards
+        </span>
+        <div className={styles.wtc_drawer__search}>
+          <TextField
+            startAdornment={<Icon iconName='magnifying-glass' size='sm' />}
+            aria-label='Search timecards'
+          />
+          <SquareIconToggleButton iconName='bars-filter' aria-label='Filter' />
+          <SquareIconToggleButton
+            iconName='arrow-up-short-wide'
+            aria-label='Sort'
+          />
+        </div>
       </div>
 
       <div className={styles.wtc_drawer__list}>
@@ -112,17 +134,28 @@ export default function WeeklyTimecardDrawer({ isOpen, onToggle, timecards }: We
 
       <div className={styles.wtc_drawer__footer}>
         <div className={styles.wtc_drawer__footerActions}>
-          <Button buttonVariant='outlined' size='sm' className={styles.wtc_drawer__footerBtn}>
+          <Button
+            buttonVariant='outlined'
+            size='sm'
+            className={styles.wtc_drawer__footerBtn}
+          >
             Approve
           </Button>
-          <Button buttonVariant='outlined' size='sm' className={styles.wtc_drawer__footerBtn}>
+          <Button
+            buttonVariant='outlined'
+            size='sm'
+            className={styles.wtc_drawer__footerBtn}
+          >
             Reject
           </Button>
         </div>
         <div className={styles.wtc_drawer__footerIcons}>
           <SquareIconToggleButton iconName='pen-to-square' aria-label='Edit' />
           <SquareIconToggleButton iconName='folder-open' aria-label='Move' />
-          <SquareIconToggleButton iconName='arrow-down-to-line' aria-label='Download' />
+          <SquareIconToggleButton
+            iconName='arrow-down-to-line'
+            aria-label='Download'
+          />
         </div>
       </div>
     </aside>

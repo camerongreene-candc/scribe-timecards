@@ -3,8 +3,7 @@
   align-items: center;
   justify-content: space-between;
   height: 44px;
-  padding: 0 var(--space-md);
-  background-color: var(--color-background-inverse-primary);
+  padding: 0 var(--space-lg);
   flex-shrink: 0;
 }
 

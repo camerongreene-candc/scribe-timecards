@@ -1,12 +1,19 @@
 .app_root {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   min-height: 100vh;
   background-color: var(--color-background-page);
+}
+
+.app_right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   padding-top: var(--space-lg);
 }
 
-/* ── Body (sidebar + right column) ─────────────────────────────────────────── */
+/* ── Body (subnav + main) ───────────────────────────────────────────────────── */
 
 .app_body {
   display: flex;

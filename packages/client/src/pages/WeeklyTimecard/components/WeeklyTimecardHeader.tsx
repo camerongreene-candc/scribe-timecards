@@ -35,11 +35,11 @@ export default function WeeklyTimecardHeader() {
         <div className={styles.wtc_header__weekSelectors}>
           <div className={styles.wtc_header__weekField}>
             <FieldLabel label="Producer's Week" />
-            <AutocompleteInput options={WEEK_OPTIONS} defaultSelectedKey={WEEK_DATES[0]} />
+            <AutocompleteInput options={WEEK_OPTIONS} defaultSelectedKey={WEEK_DATES[6]} />
           </div>
           <div className={styles.wtc_header__weekField}>
             <FieldLabel label="Employee's Week" />
-            <AutocompleteInput options={WEEK_OPTIONS} defaultSelectedKey={WEEK_DATES[0]} />
+            <AutocompleteInput options={WEEK_OPTIONS} defaultSelectedKey={WEEK_DATES[6]} />
           </div>
         </div>
       </div>

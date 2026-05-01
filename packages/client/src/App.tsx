@@ -16,6 +16,7 @@ import DailyTimesheetPage from './pages/DailyTimesheets';
 import ReportsPage from './pages/Reports';
 import WeeklyTimecardPage from './pages/WeeklyTimecard';
 import AppHeader from './components/AppHeader';
+import SideNav from './components/SideNav';
 import type { EmployeeRow } from './pages/DailyTimesheets/helpers/DailyTimesheetPage.types';
 import styles from './App.module.css';
 
@@ -38,9 +39,12 @@ export default function App() {
 
   return (
     <div className={styles.app_root}>
-      <AppHeader selectedProjectId={projectId} onProjectSelect={setProjectId} />
+      <SideNav />
 
-      <div className={styles.app_body}>
+      <div className={styles.app_right}>
+        <AppHeader selectedProjectId={projectId} onProjectSelect={setProjectId} />
+
+        <div className={styles.app_body}>
         {/* ── Secondary tab nav + content ──────────────────────────────── */}
         <div className={styles.app_column}>
           <nav className={styles.app_subnav} aria-label='Section navigation'>
@@ -97,6 +101,7 @@ export default function App() {
               </Routes>
             </SnackbarProvider>
           </main>
+        </div>
         </div>
       </div>
     </div>
